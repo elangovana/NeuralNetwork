@@ -1,11 +1,13 @@
-﻿namespace AE.MachineLearning.NeuralNet.Core
+﻿using System.Linq;
+
+namespace AE.MachineLearning.NeuralNet.Core
 {
     public class NetworkLayer
     {
+        private readonly IActivation _activation;
         private readonly Neuron[] _neurons;
         private readonly int _numOfNeurons;
         private readonly int _numberOfInputsPerNeuron;
-        private readonly IActivation _activation;
 
         /// <summary>
         ///     Initialises a networklayer
@@ -65,17 +67,18 @@
                         "The  length of the input bias vector  {0} must be  equal to the number of neurons {1} in this layer",
                         bias.Length, NumOfNeurons));
 
-            if (weights.GetLength(0) != NumOfNeurons)
+
+            if (weights.Length != NumOfNeurons)
                 throw new NeuralNetException(
                     string.Format(
                         "The length {0}  first dimension of the input weights vector  must be  equal to the number of neurons  {1} in this layer",
                         weights.GetLength(0), NumOfNeurons));
 
-            if (weights.GetLength(1) != NumberOfInputsPerNeuron)
+            if (weights.Any(x => x.Length != NumberOfInputsPerNeuron))
                 throw new NeuralNetException(
                     string.Format(
-                        "The length {0} the second dimension of the input weights vector  must be  equal to the number of neurons  {1} in the previous layer",
-                        weights.GetLength(1), NumberOfInputsPerNeuron));
+                        "The length  the second dimension of the input weights vector  must be  equal to the number of neurons  {0} in the previous layer",
+                        NumberOfInputsPerNeuron));
         }
     }
 }
