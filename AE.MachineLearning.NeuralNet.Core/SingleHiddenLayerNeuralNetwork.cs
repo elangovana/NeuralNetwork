@@ -3,18 +3,13 @@
 namespace AE.MachineLearning.NeuralNet.Core
 {
     /// <summary>
-    /// A Neural network implementation with just one hidden layer.
+    ///     A Neural network implementation with just one hidden layer.
     /// </summary>
     public class SingleHiddenLayerNeuralNetwork : INeuralNetwork
     {
-        private readonly IActivate _activation;
+        private readonly IActivation _activation;
         private readonly double[] _hGrads; // hidden gradients for back-propagation
         private readonly double[] _hoBiases;
-        private readonly double[][] _ihWeights; // input-to-hidden
-        private readonly double[] _inputs;
-        private readonly int _numHidden;
-        private readonly int _numInput;
-        private readonly int _numOutput;
         private readonly double[] _hoPrevBiasesDelta;
         private readonly double[][] _hoPrevWeightsDelta;
         private readonly double[] _hoSums;
@@ -26,17 +21,22 @@ namespace AE.MachineLearning.NeuralNet.Core
         private readonly double[] _ihPrevBiasesDelta;
         private readonly double[][] _ihPrevWeightsDelta; // for momentum with back-propagation
         private readonly double[] _ihSums;
+        private readonly double[][] _ihWeights; // input-to-hidden
+        private readonly double[] _inputs;
+        private readonly int _numHidden;
+        private readonly int _numInput;
+        private readonly int _numOutput;
         private readonly double[] _oGrads; // output gradients for back-propagation
         private readonly double[] _outputs;
 
         /// <summary>
-        /// Constructs a single hidden layer neural network given the  number of input, output and hidden neurons
+        ///     Constructs a single hidden layer neural network given the  number of input, output and hidden neurons
         /// </summary>
         /// <param name="numInput">Number of inputs</param>
         /// <param name="numHidden">Number of neurons in the hidden layer</param>
         /// <param name="numOutput">number of outputs</param>
         /// <param name="activation">Activation function to use </param>
-        public SingleHiddenLayerNeuralNetwork(int numInput, int numHidden, int numOutput, IActivate activation)
+        public SingleHiddenLayerNeuralNetwork(int numInput, int numHidden, int numOutput, IActivation activation)
         {
             _numInput = numInput;
             _numHidden = numHidden;
@@ -60,6 +60,15 @@ namespace AE.MachineLearning.NeuralNet.Core
             _ihPrevBiasesDelta = new double[numHidden];
             _hoPrevWeightsDelta = MatrixHelper.CreateMatrix(numHidden, numOutput);
             _hoPrevBiasesDelta = new double[numOutput];
+        }
+
+        public void ComputeGradientOutput(double[] targetValues, double[] outputValues, double[] gradients)
+        {
+            for (int i = 0; i < gradients.Length; ++i)
+            {
+                double derivative = _activation.CalculateDerivative(outputValues[i]); // derivative of tanh
+                gradients[i] = derivative*(targetValues[i] - outputValues[i]);
+            }
         }
 
         public void UpdateWeights(double[] tValues, double learningRate, double momentum)
@@ -90,7 +99,7 @@ namespace AE.MachineLearning.NeuralNet.Core
             for (int i = 0; i < _ihBiases.Length; ++i)
             {
                 double delta = learningRate*_hGrads[i]*1.0;
-                    // the 1.0 is the constant input for any bias; could leave out
+                // the 1.0 is the constant input for any bias; could leave out
                 _ihBiases[i] += delta;
                 _ihBiases[i] += momentum*_ihPrevBiasesDelta[i];
             }
@@ -100,7 +109,8 @@ namespace AE.MachineLearning.NeuralNet.Core
             {
                 for (int j = 0; j < _hoWeights[0].Length; ++j) // 0..1 (2)
                 {
-                    double delta = learningRate*_oGrads[j]*_ihOutputs[i]; // see above: ihOutputs are inputs to next layer
+                    double delta = learningRate*_oGrads[j]*_ihOutputs[i];
+                    // see above: ihOutputs are inputs to next layer
                     _hoWeights[i][j] += delta;
                     _hoWeights[i][j] += momentum*_hoPrevWeightsDelta[i][j];
                     _hoPrevWeightsDelta[i][j] = delta;
@@ -115,6 +125,47 @@ namespace AE.MachineLearning.NeuralNet.Core
                 _hoBiases[i] += momentum*_hoPrevBiasesDelta[i];
                 _hoPrevBiasesDelta[i] = delta;
             }
+        }
+
+
+        public double[] ComputeOutputs(double[] xValues)
+        {
+            if (xValues.Length != _numInput)
+                throw new Exception("Inputs array length " + _inputs.Length + " does not match NN numInput value " +
+                                    _numInput);
+
+            for (int i = 0; i < _numHidden; ++i)
+                _ihSums[i] = 0.0;
+            for (int i = 0; i < _numOutput; ++i)
+                _hoSums[i] = 0.0;
+
+            for (int i = 0; i < xValues.Length; ++i) // copy x-values to inputs
+                _inputs[i] = xValues[i];
+
+            for (int j = 0; j < _numHidden; ++j) // compute input-to-hidden weighted sums
+                for (int i = 0; i < _numInput; ++i)
+                    _ihSums[j] += _inputs[i]*_ihWeights[i][j];
+
+            for (int i = 0; i < _numHidden; ++i) // add biases to input-to-hidden sums
+                _ihSums[i] += _ihBiases[i];
+
+            for (int i = 0; i < _numHidden; ++i) // determine input-to-hidden output
+                _ihOutputs[i] = _activation.CalculateActivate(_ihSums[i]);
+
+            for (int j = 0; j < _numOutput; ++j) // compute hidden-to-output weighted sums
+                for (int i = 0; i < _numHidden; ++i)
+                    _hoSums[j] += _ihOutputs[i]*_hoWeights[i][j];
+
+            for (int i = 0; i < _numOutput; ++i) // add biases to input-to-hidden sums
+                _hoSums[i] += _hoBiases[i];
+
+            for (int i = 0; i < _numOutput; ++i) // determine hidden-to-output result
+                _outputs[i] = _activation.CalculateActivate(_hoSums[i]);
+
+            var result = new double[_numOutput]; // could define a GetOutputs method instead
+            _outputs.CopyTo(result, 0);
+
+            return result;
         }
 
         // UpdateWeights
@@ -162,44 +213,33 @@ namespace AE.MachineLearning.NeuralNet.Core
             return result;
         }
 
-        public double[] ComputeOutputs(double[] xValues)
+        public void SetWeight(NeuronInput[][] weightBiases)
         {
-            if (xValues.Length != _numInput)
-                throw new Exception("Inputs array length " + _inputs.Length + " does not match NN numInput value " +
-                                    _numInput);
+            ValidateWeightsMatrix(weightBiases);
+        }
 
-            for (int i = 0; i < _numHidden; ++i)
-                _ihSums[i] = 0.0;
-            for (int i = 0; i < _numOutput; ++i)
-                _hoSums[i] = 0.0;
+        private void ValidateWeightsMatrix(NeuronInput[][] weightBiases)
+        {
+//Validate first to make sure the number of layers is 2 
+            int numOfConnectedLayers = weightBiases.GetLength(0);
+            if (numOfConnectedLayers != 2)
+                throw new NeuralNetException(
+                    string.Format(
+                        "The number of layers {0} is incorrect. It must be 2 representing the connection from  input-hidden, hidden-output",
+                        numOfConnectedLayers));
 
-            for (int i = 0; i < xValues.Length; ++i) // copy x-values to inputs
-                _inputs[i] = xValues[i];
+            //Validate Each Layer to make sure the number of weights match the number of connections for that layer
+            int numConnections = _numHidden*_numInput;
+            if (weightBiases[0].Length != numConnections)
+                throw new NeuralNetException(
+                    string.Format("The number of weights {0} specfied do not match the number connections {1}",
+                                  weightBiases[0].Length, numConnections));
 
-            for (int j = 0; j < _numHidden; ++j) // compute input-to-hidden weighted sums
-                for (int i = 0; i < _numInput; ++i)
-                    _ihSums[j] += _inputs[i]*_ihWeights[i][j];
-
-            for (int i = 0; i < _numHidden; ++i) // add biases to input-to-hidden sums
-                _ihSums[i] += _ihBiases[i];
-
-            for (int i = 0; i < _numHidden; ++i) // determine input-to-hidden output
-                _ihOutputs[i] = _activation.Activate(_ihSums[i]);
-
-            for (int j = 0; j < _numOutput; ++j) // compute hidden-to-output weighted sums
-                for (int i = 0; i < _numHidden; ++i)
-                    _hoSums[j] += _ihOutputs[i]*_hoWeights[i][j];
-
-            for (int i = 0; i < _numOutput; ++i) // add biases to input-to-hidden sums
-                _hoSums[i] += _hoBiases[i];
-
-            for (int i = 0; i < _numOutput; ++i) // determine hidden-to-output result
-                _outputs[i] = _activation.Activate(_hoSums[i]);
-
-            var result = new double[_numOutput]; // could define a GetOutputs method instead
-            _outputs.CopyTo(result, 0);
-
-            return result;
+            numConnections = _numHidden*_numOutput;
+            if (weightBiases[1].Length != numConnections)
+                throw new NeuralNetException(
+                    string.Format("The number of weights {0} specfied do not match the number connections {1}",
+                                  weightBiases[1].Length, numConnections));
         }
 
         private void ComputeHiddenGradients()
@@ -217,11 +257,7 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         private void ComputeGradientOutput(double[] tValues)
         {
-            for (int i = 0; i < _oGrads.Length; ++i)
-            {
-                double derivative = (1 - _outputs[i])*(1 + _outputs[i]); // derivative of tanh
-                _oGrads[i] = derivative*(tValues[i] - _outputs[i]);
-            }
+            ComputeGradientOutput(tValues, _outputs, _oGrads);
         }
     }
 }

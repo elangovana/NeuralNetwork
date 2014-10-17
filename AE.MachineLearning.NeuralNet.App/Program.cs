@@ -14,7 +14,7 @@ namespace AE.MachineLearning.NeuralNet.App
                 Console.WriteLine("Creating a 3-input, 4-hidden, 2-output neural network");
                 Console.WriteLine("Using sigmoid function for input-to-hidden activation");
                 Console.WriteLine("Using tanh function for hidden-to-output activation");
-                IActivate activationFunction = new HyperTanActivation();
+                IActivation activationFunction = new HyperTanActivation();
                 var nn = new SingleHiddenLayerNeuralNetwork(3, 4, 2, activationFunction);
 
                 // arbitrary weights and biases

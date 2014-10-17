@@ -1,8 +1,8 @@
 ﻿namespace AE.MachineLearning.NeuralNet.Core
 {
-    public class WeightBias
+    public class NeuronInput
     {
-        public double Weight { get; set; }
+        public double[] Weights { get; set; }
         public double Bias { get; set; }
     }
 }

@@ -2,13 +2,18 @@
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
-    internal class SigmoidActivate : IActivate
+    public class SigmoidActivation : IActivation
     {
-        public double Activate(double x)
+        public double CalculateActivate(double x)
         {
             if (x < -45.0) return 0.0;
             if (x > 45.0) return 1.0;
             return 1.0/(1.0 + Math.Exp(-x));
+        }
+
+        public double CalculateDerivative(double x)
+        {
+            throw new NotImplementedException();
         }
     }
 }
