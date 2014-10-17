@@ -213,34 +213,34 @@ namespace AE.MachineLearning.NeuralNet.Core
             return result;
         }
 
-        public void SetWeight(NeuronInput[][] weightBiases)
-        {
-            ValidateWeightsMatrix(weightBiases);
-        }
+//        public void SetWeight(NeuronInput[][] weightBiases)
+//        {
+//            ValidateWeightsMatrix(weightBiases);
+//        }
 
-        private void ValidateWeightsMatrix(NeuronInput[][] weightBiases)
-        {
-//Validate first to make sure the number of layers is 2 
-            int numOfConnectedLayers = weightBiases.GetLength(0);
-            if (numOfConnectedLayers != 2)
-                throw new NeuralNetException(
-                    string.Format(
-                        "The number of layers {0} is incorrect. It must be 2 representing the connection from  input-hidden, hidden-output",
-                        numOfConnectedLayers));
+//        private void ValidateWeightsMatrix(NeuronInput[][] weightBiases)
+//        {
+////Validate first to make sure the number of layers is 2 
+//            int numOfConnectedLayers = weightBiases.GetLength(0);
+//            if (numOfConnectedLayers != 2)
+//                throw new NeuralNetException(
+//                    string.Format(
+//                        "The number of layers {0} is incorrect. It must be 2 representing the connection from  input-hidden, hidden-output",
+//                        numOfConnectedLayers));
 
-            //Validate Each Layer to make sure the number of weights match the number of connections for that layer
-            int numConnections = _numHidden*_numInput;
-            if (weightBiases[0].Length != numConnections)
-                throw new NeuralNetException(
-                    string.Format("The number of weights {0} specfied do not match the number connections {1}",
-                                  weightBiases[0].Length, numConnections));
+//            //Validate Each Layer to make sure the number of weights match the number of connections for that layer
+//            int numConnections = _numHidden*_numInput;
+//            if (weightBiases[0].Length != numConnections)
+//                throw new NeuralNetException(
+//                    string.Format("The number of weights {0} specfied do not match the number connections {1}",
+//                                  weightBiases[0].Length, numConnections));
 
-            numConnections = _numHidden*_numOutput;
-            if (weightBiases[1].Length != numConnections)
-                throw new NeuralNetException(
-                    string.Format("The number of weights {0} specfied do not match the number connections {1}",
-                                  weightBiases[1].Length, numConnections));
-        }
+//            numConnections = _numHidden*_numOutput;
+//            if (weightBiases[1].Length != numConnections)
+//                throw new NeuralNetException(
+//                    string.Format("The number of weights {0} specfied do not match the number connections {1}",
+//                                  weightBiases[1].Length, numConnections));
+//        }
 
         private void ComputeHiddenGradients()
         {

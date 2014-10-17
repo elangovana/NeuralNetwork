@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.App", "AE.MachineLearning.NeuralNet.App\AE.MachineLearning.NeuralNet.App.csproj", "{C2D1FB3F-0EF5-42B7-AA56-2BD8441D6C9A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning..NeuralNet.Tests.Core", "AE.MachineLearning..NeuralNet.Tests.Core\AE.MachineLearning..NeuralNet.Tests.Core.csproj", "{F8733AAA-8A16-4D11-8257-43D05195DC9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{C2D1FB3F-0EF5-42B7-AA56-2BD8441D6C9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2D1FB3F-0EF5-42B7-AA56-2BD8441D6C9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2D1FB3F-0EF5-42B7-AA56-2BD8441D6C9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
