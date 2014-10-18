@@ -110,5 +110,14 @@ namespace AE.MachineLearning.NeuralNet.Tests.Core
             Assert.AreEqual(0.7225, Math.Round(  sut.NetworkLayers[2].Neurons[0].Output,4));
             Assert.AreEqual(-0.8779,Math.Round(sut.NetworkLayers[2].Neurons[1].Output,4));
         }
+
+        [TestMethod]
+        public void ShouldSetRandomWeights()
+        {
+            var sut = new NeuralNetwork(3, 2, 1, new[] {4}, _mockActivate.Object);
+
+            sut.InitNetworkWithRandomWeights();
+
+        }
     }
 }

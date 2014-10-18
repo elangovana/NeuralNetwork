@@ -1,4 +1,6 @@
-﻿namespace AE.MachineLearning.NeuralNet.Core
+﻿using System;
+
+namespace AE.MachineLearning.NeuralNet.Core
 {
     public class NeuralNetwork
     {
@@ -106,6 +108,29 @@
         public void SetWeightsForLayer(int layerIndex, double[][] weights, double[] biases)
         {
             NetworkLayers[layerIndex].SetWeights(weights, biases);
+        }
+
+
+        public void InitNetworkWithRandomWeights(int? seed = default (int?))
+        {
+            Random random = seed == null ? new Random() : new Random(seed.Value);
+
+            for (int nw = 1; nw < NetworkLayers.Length; nw++)
+            {
+                NetworkLayer layer = NetworkLayers[nw];
+                var layerWeights = new double[layer.Neurons.Length][];
+                var biases = new double[layer.Neurons.Length];
+                for (int nu = 0; nu < layerWeights.Length; nu++)
+                {
+                    layerWeights[nu] = new double[NetworkLayers[nw - 1].NumOfNeurons];
+                    for (int w = 0; w < layerWeights[nu].Length; w++)
+                    {
+                        layerWeights[nu][w] = random.NextDouble();
+                    }
+                    biases[nu] = random.NextDouble();
+                }
+                SetWeightsForLayer(nw,layerWeights, biases);
+            }
         }
 
         private NetworkLayer[] ConstructNetwork()
