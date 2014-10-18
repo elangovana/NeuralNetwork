@@ -1,5 +1,6 @@
 ﻿using System;
 
+//sourced form http://msdn.microsoft.com/en-us/magazine/jj658979.aspx
 namespace BackPropagation
 {
     class BackPropagationProgram

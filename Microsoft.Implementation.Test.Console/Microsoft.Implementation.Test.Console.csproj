@@ -7,8 +7,8 @@
     <ProjectGuid>{5B2C15C4-6478-4CFF-859C-7B0082CF13E8}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Implemntation.BP</RootNamespace>
-    <AssemblyName>Microsoft.Implemntation.BP</AssemblyName>
+    <RootNamespace>Microsoft.Implementation.Test.Console</RootNamespace>
+    <AssemblyName>Microsoft.Implementation.Test.Console</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
