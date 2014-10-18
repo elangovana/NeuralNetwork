@@ -5,11 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.App", "AE.MachineLearning.NeuralNet.App\AE.MachineLearning.NeuralNet.App.csproj", "{C2D1FB3F-0EF5-42B7-AA56-2BD8441D6C9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.Tests.Core", "AE.MachineLearning..NeuralNet.Tests.Core\AE.MachineLearning.NeuralNet.Tests.Core.csproj", "{F8733AAA-8A16-4D11-8257-43D05195DC9C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Implemntation.BP", "Microsoft.Implemntation.BP\Microsoft.Implemntation.BP.csproj", "{5B2C15C4-6478-4CFF-859C-7B0082CF13E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.Tests.Core", "AE.MachineLearning.NeuralNet.Tests.Core\AE.MachineLearning.NeuralNet.Tests.Core.csproj", "{F8733AAA-8A16-4D11-8257-43D05195DC9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,20 +25,20 @@ Global
 		{C2D1FB3F-0EF5-42B7-AA56-2BD8441D6C9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2D1FB3F-0EF5-42B7-AA56-2BD8441D6C9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2D1FB3F-0EF5-42B7-AA56-2BD8441D6C9A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5B2C15C4-6478-4CFF-859C-7B0082CF13E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5B2C15C4-6478-4CFF-859C-7B0082CF13E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B2C15C4-6478-4CFF-859C-7B0082CF13E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B2C15C4-6478-4CFF-859C-7B0082CF13E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F8733AAA-8A16-4D11-8257-43D05195DC9C} = {9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}
 		{5B2C15C4-6478-4CFF-859C-7B0082CF13E8} = {9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}
+		{F8733AAA-8A16-4D11-8257-43D05195DC9C} = {9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}
 	EndGlobalSection
 EndGlobal
