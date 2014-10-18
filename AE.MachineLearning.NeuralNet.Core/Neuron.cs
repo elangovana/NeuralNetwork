@@ -2,11 +2,20 @@
 {
     public class Neuron
     {
+        private readonly IActivation _activation;
+
+        public Neuron(IActivation activation)
+        {
+            _activation = activation;
+        }
+
         public double[] Weights { get; set; }
 
         public double Bias { get; set; }
 
-        public double CalculateOutput(double[] input, IActivation activation)
+        public double Output { get; private set; }
+
+        public void CalculateOutput(double[] input)
         {
             double result = 0;
 
@@ -23,7 +32,7 @@
 
             result = result + Bias;
 
-            return activation.CalculateActivate(result);
+            Output = _activation.CalculateActivate(result);
         }
     }
 }

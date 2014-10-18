@@ -5,6 +5,7 @@ namespace AE.MachineLearning.NeuralNet.Core
     public class NetworkLayer
     {
         private readonly IActivation _activation;
+
         private readonly Neuron[] _neurons;
         private readonly int _numOfNeurons;
         private readonly int _numberOfInputsPerNeuron;
@@ -23,7 +24,7 @@ namespace AE.MachineLearning.NeuralNet.Core
             _neurons = new Neuron[numOfNeurons];
             for (int i = 0; i < Neurons.Length; i++)
             {
-                Neurons[i] = new Neuron();
+                Neurons[i] = new Neuron(_activation);
             }
         }
 
@@ -41,6 +42,12 @@ namespace AE.MachineLearning.NeuralNet.Core
         {
             get { return _numberOfInputsPerNeuron; }
         }
+
+        public IActivation Activation
+        {
+            get { return _activation; }
+        }
+
 
         /// <summary>
         ///     Sets the weights and bias for each neuron

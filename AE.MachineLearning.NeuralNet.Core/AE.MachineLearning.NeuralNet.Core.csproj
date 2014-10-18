@@ -39,7 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IBackPropagation.cs" />
+    <Compile Include="BackPropagationTraining.cs" />
+    <Compile Include="ICostFunction.cs" />
     <Compile Include="InputActivation.cs" />
     <Compile Include="MatrixHelper.cs" />
     <Compile Include="HyperTanActivation.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SigmoidActivate.cs" />
     <Compile Include="Neuron.cs" />
+    <Compile Include="SquaredCostFunction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
