@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AE.MachineLearning.NeuralNet.Tests.Core
 {
     [TestClass]
-    public class BackPropagationTraningTest
+    public class BackPropagationTrainingTest
     {
         private NeuralNetwork _network;
         private int _oIndex;

@@ -56,7 +56,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="BackPropagationTraningTest.cs" />
+    <Compile Include="BackPropagationTrainingTest.cs" />
     <Compile Include="NeuralNetworkTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
