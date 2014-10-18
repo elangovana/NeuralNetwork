@@ -5,6 +5,7 @@ namespace AE.MachineLearning.NeuralNet.Core
     public class NetworkLayer
     {
         private readonly IActivation _activation;
+        private readonly bool _isInputLayer;
 
         private readonly Neuron[] _neurons;
         private readonly int _numOfNeurons;
@@ -16,16 +17,26 @@ namespace AE.MachineLearning.NeuralNet.Core
         /// <param name="numOfNeurons">the number of neurons in this layer</param>
         /// <param name="numberOfInputsPerNeuron">This is the number of neurons in the previous layer and is thus the number of inputs to each neuron in this layer</param>
         /// <param name="activation">Activation Function</param>
-        public NetworkLayer(int numOfNeurons, int numberOfInputsPerNeuron, IActivation activation)
+        /// <param name="isInputLayer"></param>
+        public NetworkLayer(int numOfNeurons, int numberOfInputsPerNeuron, IActivation activation, bool isInputLayer = false)
         {
             _numOfNeurons = numOfNeurons;
             _numberOfInputsPerNeuron = numberOfInputsPerNeuron;
             _activation = activation;
+            _isInputLayer = isInputLayer;
             _neurons = new Neuron[numOfNeurons];
             for (int i = 0; i < Neurons.Length; i++)
             {
                 Neurons[i] = new Neuron(_activation);
             }
+
+            if (!isInputLayer) return;
+            var inputWeights = new double[numOfNeurons][];
+            for (var index = 0; index < inputWeights.Length; index++)
+            {
+                inputWeights[index]= new[] {1.0};
+            }
+            SetWeights(inputWeights, new double[numOfNeurons]);
         }
 
         public Neuron[] Neurons
@@ -46,6 +57,11 @@ namespace AE.MachineLearning.NeuralNet.Core
         public IActivation Activation
         {
             get { return _activation; }
+        }
+
+        public bool IsInputLayer
+        {
+            get { return _isInputLayer; }
         }
 
 

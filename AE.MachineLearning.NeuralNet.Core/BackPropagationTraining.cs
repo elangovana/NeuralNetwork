@@ -1,17 +1,19 @@
-﻿namespace AE.MachineLearning.NeuralNet.Core
+﻿using System.Linq;
+
+namespace AE.MachineLearning.NeuralNet.Core
 {
     public class BackPropagationTraining
     {
+        private const double Error = .01;
         private readonly ICostFunction _costFunction;
         private readonly double[][] _gradients;
         private readonly NeuralNetwork _network;
-        private const double Error = .01;
 
         public BackPropagationTraining(NeuralNetwork network, ICostFunction costFunction)
         {
             _network = network;
             _costFunction = costFunction;
-            _gradients = new double[network.NetworkLayers.Length - 1][];
+            _gradients = new double[network.NetworkLayers.Length][];
         }
 
         /// <summary>
@@ -23,11 +25,23 @@
         /// <param name="momentum"></param>
         public void Train(double[][] inputs, double[][] targetOutputs, double learningRate, double momentum)
         {
-            if (inputs.GetLength(1) != _network.NumberOfInputFeatures)
+            if (inputs.Any(x => x.Length != _network.NumberOfInputFeatures))
                 throw new NeuralNetException(
                     string.Format(
-                        "The length {0} second dimension of the input array is must be number of features specified in the constructor {1}",
-                        inputs.GetLength(1), _network.NumberOfInputFeatures));
+                        "Each item in the input array data must contain number of features specified in the constructor {0}",
+                        _network.NumberOfInputFeatures));
+
+            if (targetOutputs.Any(x => x.Length != _network.NumberOfOutputs))
+                throw new NeuralNetException(
+                    string.Format(
+                        "Each item in the output array data must contain number of output specified in the constructor {0}",
+                        _network.NumberOfOutputs));
+
+            if (inputs.Length != targetOutputs.Length)
+                throw new NeuralNetException(
+                    string.Format(
+                        "The length {0} of the input vector does not match the length {1} of the target output vector",
+                        inputs.Length, targetOutputs.Length));
 
             //TODO: Set init Weights!! Either Randomise or accept weights
 
@@ -65,10 +79,10 @@
             IActivation activationFunction = outputLayer.Activation;
             for (int n = 0; n < gradientToCompute.Length; ++n)
             {
-                double derivativeActivation = activationFunction.CalculateDerivative(outputValues[n]);
+                double derivativeActivation = activationFunction.CalculateDerivative(outputLayer.Neurons[n].Output);
                 gradientToCompute[n] = derivativeActivation*
-                                       _costFunction.DerivativeCostWrtOutput(outputValues[n],
-                                                                             outputLayer.Neurons[n].Output);
+                                       _costFunction.DerivativeCostWrtOutput(
+                                            outputValues[n], outputLayer.Neurons[n].Output);
             }
 
             return gradientToCompute;
@@ -97,7 +111,7 @@
                 double errorContribToNextLayer = 0;
                 for (int j = 0; j < nextLayer.Neurons.Length; j++)
                 {
-                    errorContribToNextLayer = nextLayer.Neurons[j].Weights[i]*gradientsOfNextLayer[j];
+                    errorContribToNextLayer += nextLayer.Neurons[j].Weights[i]*gradientsOfNextLayer[j];
                 }
 
                 //Add derivate to previous
@@ -107,27 +121,26 @@
             return gradientToCompute;
         }
 
-        public void UpdateWeights(double learningRate, double momentum)
+        private void UpdateWeights(double learningRate, double momentum)
         {
             for (int nw = 1; nw < _network.NetworkLayers.Length; nw++)
             {
-                var layer = _network.NetworkLayers[nw];
+                NetworkLayer layer = _network.NetworkLayers[nw];
                 for (int nu = 0; nu < layer.Neurons.Length; nu++)
                 {
                     Neuron neuron = layer.Neurons[nu];
                     neuron.Bias += learningRate*_gradients[nw][nu];
-                        //todo: add momemtum to bias
+                    //todo: add momemtum to bias
                     for (int w = 0; w < neuron.Weights.Length; w++)
                     {
                         // gradient of for this neuron * input for this neuron
                         double delta = learningRate*_gradients[nw][nu]*_network.NetworkLayers[nw - 1].Neurons[w].Output;
                         neuron.Weights[w] += delta;
                         //TODO add momentum
-                       // neuron.Weights[w] = newWeight + momentum * neuron.Weights[w];
+                        // neuron.Weights[w] = newWeight + momentum * neuron.Weights[w];
                     }
                 }
             }
-           
         }
     }
 }

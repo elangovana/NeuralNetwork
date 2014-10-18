@@ -13,7 +13,7 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         public double CalculateDerivative(double x)
         {
-            throw new NotImplementedException();
+            return (1 - x)*x;
         }
     }
 }

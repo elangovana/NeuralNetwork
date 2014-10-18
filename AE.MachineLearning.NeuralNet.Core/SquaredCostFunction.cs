@@ -2,7 +2,7 @@
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
-    internal class SquaredCostFunction : ICostFunction
+    public class SquaredCostFunction : ICostFunction
     {
         /// <summary>
         ///     Cost (Error per training data) -> [(t-a)^2]/2
@@ -45,7 +45,7 @@ namespace AE.MachineLearning.NeuralNet.Core
         /// <returns>Derivative</returns>
         public double DerivativeCostWrtOutput(double target, double actual)
         {
-            return -1.0*(target - actual);
+            return (target - actual);
         }
 
 

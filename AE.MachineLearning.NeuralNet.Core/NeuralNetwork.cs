@@ -20,7 +20,8 @@
         /// <param name="activation">Activation function to use for the network</param>
         /// <param name="activationOutput">Optional Parameter, required only if a separate activation function is used by the output layer</param>
         public NeuralNetwork(int numberOfInputFeatureFeatures, int numberOfOutputs, int numberOfHiddenLayers,
-                             int[] numberOfneuronsForHiddenLayers, IActivation activation, IActivation activationOutput = null)
+                             int[] numberOfneuronsForHiddenLayers, IActivation activation,
+                             IActivation activationOutput = null)
         {
             _numberOfInputFeatures = numberOfInputFeatureFeatures;
             _numberOfOutputs = numberOfOutputs;
@@ -69,20 +70,28 @@
         }
 
 
-
         public void ComputeOutput(double[] inputFeatures)
         {
-//Initially Previous layer out is the input itself
-            double[] outPutOfPreviousLayer = inputFeatures;
-
-            for (int i = 0; i < NetworkLayers.Length; i++)
+            //Initially Previous layer out is the input itself
+            var outPutOfPreviousLayer = new double[inputFeatures.Length];
+            NetworkLayer inputLayer = NetworkLayers[0];
+            for (int index = 0; index < inputFeatures.Length; index++)
             {
-                var outputOfCurrentLayer = new double[NetworkLayers[i].Neurons.Length];
+                double inputFeature = inputFeatures[index];
+                inputLayer.Neurons[index].CalculateOutput(new[] {inputFeature});
+                outPutOfPreviousLayer[index] = inputLayer.Neurons[index].Output;
+            }
 
-                foreach (Neuron neuron in NetworkLayers[i].Neurons)
+            //Rest of the layers
+            for (int nw = 1; nw < NetworkLayers.Length; nw++)
+            {
+                var outputOfCurrentLayer = new double[NetworkLayers[nw].Neurons.Length];
+
+                for (int nu = 0; nu < NetworkLayers[nw].Neurons.Length; nu++)
                 {
+                    Neuron neuron = NetworkLayers[nw].Neurons[nu];
                     neuron.CalculateOutput(outPutOfPreviousLayer);
-                    outputOfCurrentLayer[i] = neuron.Output;
+                    outputOfCurrentLayer[nu] = neuron.Output;
                 }
                 outPutOfPreviousLayer = outputOfCurrentLayer;
             }
@@ -105,7 +114,7 @@
             var layers = new NetworkLayer[totalNumberOfLayers];
 
             //First layer -> tied to number of features
-            layers[0] = new NetworkLayer(_numberOfInputFeatures, 1, new InputActivation());
+            layers[0] = new NetworkLayer(_numberOfInputFeatures, 1, new InputActivation(), true);
 
             //Hidden Layers
             for (int i = 1; i <= _numberOfHiddenLayers; i++)

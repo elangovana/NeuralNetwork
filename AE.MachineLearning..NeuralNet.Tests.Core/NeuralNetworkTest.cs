@@ -1,4 +1,5 @@
-﻿using AE.MachineLearning.NeuralNet.Core;
+﻿using System;
+using AE.MachineLearning.NeuralNet.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -76,6 +77,38 @@ namespace AE.MachineLearning.NeuralNet.Tests.Core
             {
                 Assert.AreEqual(biases[i], sut.NetworkLayers[0].Neurons[i].Bias);
             }
+        }
+
+        [TestMethod]
+        public void ShouldComputeOutputCorrectly()
+        {
+             var sut = new NeuralNetwork(3, 2, 1, new[] {4}, new SigmoidActivation(),new HyperTanActivation());
+            var weightsHidden = new double[4][];
+            weightsHidden[0] = new[] {0.1, 0.5, 0.9};
+            weightsHidden[1] = new[] {0.2, 0.6, 1.0};
+            weightsHidden[2] = new[] {0.3, 0.7, 1.1};
+            weightsHidden[3] = new[] {0.4, 0.8, 1.2};
+            sut.SetWeightsForLayer(1, weightsHidden, new[] {-2.0, -6.0, -1.0, -7.0});
+
+            var weightsOutput = new double[2][];
+            weightsOutput[0] = new[] {1.3, 1.5, 1.7, 1.9};
+            weightsOutput[1] = new[] {1.4, 1.6, 1.8, 2.0};
+            sut.SetWeightsForLayer(2, weightsOutput, new[] {-2.5, -5.0});
+
+
+
+
+            var inputs = new[] {1.0, 2.0, 3.0};
+
+            
+          
+
+            //Act
+            sut.ComputeOutput(inputs);
+
+            //Assert
+            Assert.AreEqual(0.7225, Math.Round(  sut.NetworkLayers[2].Neurons[0].Output,4));
+            Assert.AreEqual(-0.8779,Math.Round(sut.NetworkLayers[2].Neurons[1].Output,4));
         }
     }
 }
