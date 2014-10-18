@@ -42,7 +42,6 @@
     <Compile Include="BackPropagationTraining.cs" />
     <Compile Include="ICostFunction.cs" />
     <Compile Include="InputActivation.cs" />
-    <Compile Include="MatrixHelper.cs" />
     <Compile Include="HyperTanActivation.cs" />
     <Compile Include="IActivation.cs" />
     <Compile Include="INeuralNetwork.cs" />
