@@ -15,7 +15,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
         private readonly double _momentum;
         private StreamWriter _writer;
 
-        public HandwrittenDigitRecogniser(string trainFile, string testFile, string outDir, double learningRate, double momentum,  string networkFile = null)
+        public HandwrittenDigitRecogniser(string trainFile, string testFile, string outDir, double learningRate, double momentum,   string networkFile = null)
         {
             _trainFile = trainFile;
             _testFile = testFile;
@@ -37,7 +37,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             GC.SuppressFinalize(this);
         }
 
-        public void Run()
+        public void Run(int maxIteration = 10000)
         {
             Writelog("Starting Run");
 
@@ -48,7 +48,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
 
             //Write Network init
-            BackPropagationTraining trainingAlgorithm = Train(data, netWork);
+            BackPropagationTraining trainingAlgorithm = Train(data, netWork, maxIteration);
 
             Predict(data, trainingAlgorithm);
 
@@ -64,7 +64,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             data.WriteData(_testFile, prediction, Path.Combine(_outDir, "predictions.csv"));
         }
 
-        private BackPropagationTraining Train(HandandWrittenDataLoader data, NeuralNetwork netWork)
+        private BackPropagationTraining Train(HandandWrittenDataLoader data, NeuralNetwork netWork, int maxIteration)
         {
            
             Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
@@ -76,7 +76,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
                 };
          
             trainingAlgorithm.Train(data.Inputs, data.Outputs,
-                                    _learningRate, _momentum);
+                                    _learningRate, _momentum,.05,maxIteration);
             return trainingAlgorithm;
         }
 

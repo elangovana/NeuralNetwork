@@ -12,7 +12,7 @@ namespace AE.MachineLearning.NeuralNet.Core
         private readonly NeuralNetwork _network;
         private double[][] _previousDeltaBias;
         private double[][][] _previousDeltaWeight;
-
+        private int _flushCounter = 0;
         public BackPropagationTraining(NeuralNetwork network, ICostFunction costFunction)
         {
             _network = network;
@@ -108,7 +108,7 @@ namespace AE.MachineLearning.NeuralNet.Core
 
                 error = error/inputs.Length;
                 iter++;
-                WriteLog(string.Format("Iteration {0} - Error {1}", iter, error), true);
+                WriteLog(string.Format("Iteration {0} - Error {1}", iter, error));
             } while (error > maxError && iter < maxIteration);
         }
 
@@ -218,12 +218,17 @@ namespace AE.MachineLearning.NeuralNet.Core
             return target.Select((t, i) => Math.Abs(t - output[i])).Sum();
         }
 
-        private void WriteLog(string message, bool flush = false)
+        private void WriteLog(string message)
         {
             if (LogWriter == null) return;
 
             LogWriter.WriteLine("{0} - {1}", DateTime.Now, message);
-            if (flush) LogWriter.Flush();
+            if (_flushCounter%10 == 0)
+            {
+                LogWriter.Flush();
+                _flushCounter = 0;
+            }
+            _flushCounter++;
         }
     }
 }

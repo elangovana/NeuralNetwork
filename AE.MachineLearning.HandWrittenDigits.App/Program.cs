@@ -9,9 +9,9 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
         private static void Main(string[] args)
         {
-            if (args.Length < 5)
+            if (args.Length < 6)
             {
-                Console.WriteLine("Usage: AE.MachineLearning.HandWrittenDigits.App.exe trainFilePath testFilePath outDir learningRate momentum [<networkfile>]  ");
+                Console.WriteLine("Usage: AE.MachineLearning.HandWrittenDigits.App.exe trainFilePath testFilePath outDir learningRate momentum maxIteration [<networkfile>]  ");
                 return;
             }
             string trainFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, args[0]);
@@ -21,13 +21,14 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
             double learningRate = Double.Parse(args[3]);
             double mometum = Double.Parse(args[4]);
+            int maxIteration = int.Parse(args[5]);
             string networkFile = null;
-            if (args.Length == 6)
-                networkFile = args[5];
+            if (args.Length == 7)
+                networkFile = args[6];
 
             using (var handwrittenDigitRecogniser = new HandwrittenDigitRecogniser(trainFile, testFile, outDir, learningRate,mometum, networkFile))
             {
-                handwrittenDigitRecogniser.Run();
+                handwrittenDigitRecogniser.Run(maxIteration);
             }
             
         }
