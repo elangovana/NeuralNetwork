@@ -1,15 +1,24 @@
 ﻿using System.Linq;
+using System.Runtime.Serialization;
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
+    [DataContract]
     public class NetworkLayer
     {
-        private readonly IActivation _activation;
-        private readonly bool _isInputLayer;
+        [DataMember] private readonly bool _isInputLayer;
 
-        private readonly Neuron[] _neurons;
-        private readonly int _numOfNeurons;
-        private readonly int _numberOfInputsPerNeuron;
+        [DataMember] private readonly Neuron[] _neurons;
+
+        [DataMember] private readonly int _numOfNeurons;
+
+        [DataMember] private readonly int _numberOfInputsPerNeuron;
+
+        private IActivation _activation;
+
+        public NetworkLayer()
+        {
+        }
 
         /// <summary>
         ///     Initialises a networklayer
@@ -18,23 +27,24 @@ namespace AE.MachineLearning.NeuralNet.Core
         /// <param name="numberOfInputsPerNeuron">This is the number of neurons in the previous layer and is thus the number of inputs to each neuron in this layer</param>
         /// <param name="activation">Activation Function</param>
         /// <param name="isInputLayer"></param>
-        public NetworkLayer(int numOfNeurons, int numberOfInputsPerNeuron, IActivation activation, bool isInputLayer = false)
+        public NetworkLayer(int numOfNeurons, int numberOfInputsPerNeuron, IActivation activation,
+                            bool isInputLayer = false)
         {
             _numOfNeurons = numOfNeurons;
             _numberOfInputsPerNeuron = numberOfInputsPerNeuron;
-            _activation = activation;
+            Activation = activation;
             _isInputLayer = isInputLayer;
             _neurons = new Neuron[numOfNeurons];
             for (int i = 0; i < Neurons.Length; i++)
             {
-                Neurons[i] = new Neuron(_activation);
+                Neurons[i] = new Neuron(Activation);
             }
 
             if (!isInputLayer) return;
             var inputWeights = new double[numOfNeurons][];
-            for (var index = 0; index < inputWeights.Length; index++)
+            for (int index = 0; index < inputWeights.Length; index++)
             {
-                inputWeights[index]= new[] {1.0};
+                inputWeights[index] = new[] {1.0};
             }
             SetWeights(inputWeights, new double[numOfNeurons]);
         }
@@ -57,11 +67,24 @@ namespace AE.MachineLearning.NeuralNet.Core
         public IActivation Activation
         {
             get { return _activation; }
+            set
+            {
+                _activation = value;
+                UpdateNeuronActivations();
+            }
         }
 
         public bool IsInputLayer
         {
             get { return _isInputLayer; }
+        }
+
+        private void UpdateNeuronActivations()
+        {
+            foreach (Neuron neuron in Neurons)
+            {
+                neuron.Activation = Activation;
+            }
         }
 
 

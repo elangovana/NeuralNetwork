@@ -6,10 +6,12 @@ namespace AE.MachineLearning.HandWrittenDigits.Test.App
 {
     [TestClass]
     [DeploymentItem(TrainFile)]
+    [DeploymentItem(TestFile)]
     public class HandwrittenDigitRecogniserTest
     {
 
         public const string TrainFile = "train.csv";
+        public const string TestFile = "test.csv";
 
 
         [TestMethod]
@@ -18,7 +20,7 @@ namespace AE.MachineLearning.HandWrittenDigits.Test.App
             var trainFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TrainFile);
             var outDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "outDir");
 
-            var testFile = trainFile;
+            var testFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestFile); ;
 
             using (var sut = new HandwrittenDigitRecogniser(trainFile,testFile, outDir))
             {

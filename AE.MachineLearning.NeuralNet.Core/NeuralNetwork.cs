@@ -1,16 +1,25 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
+    [DataContract]
     public class NeuralNetwork
     {
-        private readonly IActivation _activation;
-        private readonly IActivation _activationOutput;
-        private readonly NetworkLayer[] _networkLayers;
-        private readonly int _numberOfHiddenLayers;
-        private readonly int _numberOfInputFeatures;
-        private readonly int _numberOfOutputs;
-        private readonly int[] _numberOfneuronsForHiddenLayers;
+        [DataMember] private readonly int _numberOfHiddenLayers;
+
+        [DataMember] private readonly int _numberOfInputFeatures;
+
+        [DataMember] private readonly int _numberOfOutputs;
+
+        [DataMember] private readonly int[] _numberOfneuronsForHiddenLayers;
+        private IActivation _activationOutput;
+
+        [DataMember] private NetworkLayer[] _networkLayers;
+
+        public NeuralNetwork()
+        {
+        }
 
         /// <summary>
         ///     Constructs a new neural network.
@@ -29,16 +38,16 @@ namespace AE.MachineLearning.NeuralNet.Core
             _numberOfOutputs = numberOfOutputs;
             _numberOfHiddenLayers = numberOfHiddenLayers;
             _numberOfneuronsForHiddenLayers = numberOfneuronsForHiddenLayers;
-            _activation = activation;
-            _activationOutput = activationOutput ?? _activation;
+            Activation = activation;
+            ActivationOutput = activationOutput;
             if (numberOfneuronsForHiddenLayers.Length != numberOfHiddenLayers)
                 throw new NeuralNetException(
                     string.Format(
                         "The length {0} of the numberOfneuronsForHiddenLayers array must be equal to the numberOfhiddenLayers specified {1} ",
                         numberOfneuronsForHiddenLayers.Length, numberOfHiddenLayers));
-
-            _networkLayers = ConstructNetwork();
         }
+
+        public IActivation Activation { get; private set; }
 
 
         public int NumberOfInputFeatures
@@ -61,14 +70,33 @@ namespace AE.MachineLearning.NeuralNet.Core
             get { return _numberOfneuronsForHiddenLayers; }
         }
 
+        public NetworkLayer OutputLayer
+        {
+            get { return NetworkLayers[NumberOfHiddenLayers + 1]; }
+        }
+
         public NetworkLayer[] NetworkLayers
         {
-            get { return _networkLayers; }
+            get { return _networkLayers ?? (_networkLayers = ConstructNetwork()); }
         }
 
         public IActivation ActivationOutput
         {
-            get { return _activationOutput; }
+            get { return _activationOutput ?? Activation; }
+            private set { _activationOutput = value; }
+        }
+
+        public double[] GetOutput()
+        {
+            var output = new double[NumberOfOutputs];
+
+            for (int nu = 0; nu < OutputLayer.Neurons.Length; nu++)
+            {
+                Neuron neuron = NetworkLayers[NumberOfHiddenLayers + 1].Neurons[nu];
+                output[nu] = neuron.Output;
+            }
+
+            return output;
         }
 
 
@@ -129,7 +157,7 @@ namespace AE.MachineLearning.NeuralNet.Core
                     }
                     biases[nu] = random.NextDouble();
                 }
-                SetWeightsForLayer(nw,layerWeights, biases);
+                SetWeightsForLayer(nw, layerWeights, biases);
             }
         }
 
@@ -146,7 +174,7 @@ namespace AE.MachineLearning.NeuralNet.Core
             {
                 layers[i] = new NetworkLayer(_numberOfneuronsForHiddenLayers[i - 1],
                                              layers[i - 1].NumOfNeurons,
-                                             _activation);
+                                             Activation);
             }
 
             //Final output layer -> tied to number of outputs
@@ -154,6 +182,32 @@ namespace AE.MachineLearning.NeuralNet.Core
                                                                layers[totalNumberOfLayers - 2].NumOfNeurons,
                                                                ActivationOutput);
             return layers;
+        }
+
+        public void PersistNetwork(string fileName)
+        {
+            PersistanceHelper.Serlialse(this, fileName);
+        }
+
+        public NeuralNetwork LoadNetwork(string fileName, IActivation activation, IActivation outputActivation = null)
+        {
+            Activation = activation;
+            ActivationOutput = ActivationOutput;
+
+            var networK = PersistanceHelper.Deseralise<NeuralNetwork>(fileName);
+
+            networK.NetworkLayers[0].Activation = new InputActivation();
+
+            for (var i = 1; i < networK.NetworkLayers.Length -1 ; i++)
+            {
+                networK.NetworkLayers[i].Activation = Activation;
+                
+            }
+
+            networK.OutputLayer.Activation = ActivationOutput;
+
+
+            return networK;
         }
     }
 }

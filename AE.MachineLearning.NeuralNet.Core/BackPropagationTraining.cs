@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
@@ -16,6 +18,8 @@ namespace AE.MachineLearning.NeuralNet.Core
             _gradients = new double[network.NetworkLayers.Length][];
         }
 
+        public StreamWriter LogWriter { get; set; }
+
         /// <summary>
         ///     Trains the network
         /// </summary>
@@ -23,7 +27,9 @@ namespace AE.MachineLearning.NeuralNet.Core
         /// <param name="targetOutputs"></param>
         /// <param name="learningRate"></param>
         /// <param name="momentum"></param>
-        public void Train(double[][] inputs, double[][] targetOutputs, double learningRate, double momentum)
+        /// <param name="maxError">Max Error Value. Stops when the error rate reaches this value</param>
+        /// <param name="maxIteration">To prevent long running times, stops at this iteration</param>
+        public void Train(double[][] inputs, double[][] targetOutputs, double learningRate, double momentum, double maxError=.05,int maxIteration = 10000 )
         {
             if (inputs.Any(x => x.Length != _network.NumberOfInputFeatures))
                 throw new NeuralNetException(
@@ -43,27 +49,64 @@ namespace AE.MachineLearning.NeuralNet.Core
                         "The length {0} of the input vector does not match the length {1} of the target output vector",
                         inputs.Length, targetOutputs.Length));
 
-            //TODO: Set init Weights!! Either Randomise or accept weights
+            double error;
+            int iter = 0;
 
-            for (int index = 0; index < inputs.Length; index++)
+            do
             {
-                //Compute output
-                _network.ComputeOutput(inputs[index]);
-
-                //Compute gradient for output layer
-                int nw = _network.NetworkLayers.Length - 1;
-                _gradients[nw] = ComputeGradientOutput(_network.NetworkLayers[nw], targetOutputs[index]);
-
-                //Compute gradient for rest of the layers
-                for (nw = nw - 1; nw > 0; nw--)
+                error = 0.0;
+                iter++;
+                for (int index = 0; index < inputs.Length; index++)
                 {
-                    _gradients[nw] = ComputeGradientHidden(_network.NetworkLayers[nw + 1], _gradients[nw + 1],
-                                                           _network.NetworkLayers[nw]);
+                    //Compute output
+                    _network.ComputeOutput(inputs[index]);
+
+                    //Cal errror to keep going :-)
+                    error += CalcError(targetOutputs[index], _network.GetOutput());
+
+                    //Compute gradient for output layer
+                    int nw = _network.NetworkLayers.Length - 1;
+                    _gradients[nw] = ComputeGradientOutput(_network.NetworkLayers[nw], targetOutputs[index]);
+
+                    //Compute gradient for rest of the layers
+                    for (nw = nw - 1; nw > 0; nw--)
+                    {
+                        _gradients[nw] = ComputeGradientHidden(_network.NetworkLayers[nw + 1], _gradients[nw + 1],
+                                                               _network.NetworkLayers[nw]);
+                    }
+
+
+                    //Update Weights
+                    UpdateWeights(learningRate, momentum);
                 }
 
-                //Update Weights
-                UpdateWeights(learningRate, momentum);
+                error = error/inputs.Length;
+
+                WriteLog(string.Format("Iteration {0} - Error {1}", iter, error), true);
+                
+            } while (error > maxError && iter < maxIteration );
+        }
+
+
+        /// <summary>
+        ///     Predicts output based on the training
+        /// </summary>
+        /// <param name="inputs"></param>
+        /// <returns></returns>
+        public double[][] Predict(double[][] inputs)
+        {
+            var output = new double[inputs.Length][];
+
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                double[] input = inputs[i];
+
+                _network.ComputeOutput(input);
+
+                output[i] = _network.GetOutput();
             }
+
+            return output;
         }
 
         /// <summary>
@@ -82,7 +125,7 @@ namespace AE.MachineLearning.NeuralNet.Core
                 double derivativeActivation = activationFunction.CalculateDerivative(outputLayer.Neurons[n].Output);
                 gradientToCompute[n] = derivativeActivation*
                                        _costFunction.DerivativeCostWrtOutput(
-                                            outputValues[n], outputLayer.Neurons[n].Output);
+                                           outputValues[n], outputLayer.Neurons[n].Output);
             }
 
             return gradientToCompute;
@@ -141,6 +184,20 @@ namespace AE.MachineLearning.NeuralNet.Core
                     }
                 }
             }
+        }
+
+
+        private static double CalcError(double[] target, double[] output)
+        {
+            return target.Select((t, i) => Math.Abs(t - output[i])).Sum();
+        }
+
+        private void WriteLog(string message, bool flush = false)
+        {
+            if (LogWriter == null) return;
+
+            LogWriter.WriteLine("{0} - {1}", DateTime.Now, message);
+            if (flush) LogWriter.Flush();
         }
     }
 }

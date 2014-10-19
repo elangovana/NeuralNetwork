@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace AE.MachineLearning.HandWrittenDigits.App
 {
@@ -26,13 +28,39 @@ namespace AE.MachineLearning.HandWrittenDigits.App
                 Outputs[r] = new double[10];
                 Inputs[r] = new double[entry.Length - 1];
                 Outputs[r][(int) entry[0]] = 1.0;
-                for (var c = 1; c < entry.Length; c++)
+                for (int c = 1; c < entry.Length; c++)
                 {
-                    Inputs[r][c-1] = entry[c];
+                    Inputs[r][c - 1] = entry[c];
                 }
             }
 
             TestInputs = ParseFile(testFile).ToArray();
+        }
+
+
+        public void WriteData(string inputTestFile, double[][] outputs, string outFile)
+        {
+            using (StreamWriter writer = File.CreateText(outFile))
+            {
+                string[] input = File.ReadAllLines(inputTestFile);
+
+                for (int i = 0; i < input.Length; i++)
+                {
+                    double maxProb = outputs[i].Max(x => x);
+
+                    int digit = -1;
+                    for (int j = 0; j < outputs[i].Length; j++)
+                    {
+                        if (Math.Round(outputs[i][j], 4) == Math.Round(maxProb, 4))
+                        {
+                            digit = j;
+                            break;
+                        }
+                    }
+
+                    writer.WriteLine("{0},{1}", digit, input[i]);
+                }
+            }
         }
 
         private static List<double[]> ParseFile(string dataFile)
@@ -46,8 +74,8 @@ namespace AE.MachineLearning.HandWrittenDigits.App
                 while ((line = file.ReadLine()) != null)
                 {
                     string[] columns = line.Split(new[] {Separator});
-                    data.Add( new double[columns.Length]);
-                  
+                    data.Add(new double[columns.Length]);
+
                     for (int c = 0; c < columns.Length; c++)
                     {
                         data[i][c] = double.Parse(columns[c]);

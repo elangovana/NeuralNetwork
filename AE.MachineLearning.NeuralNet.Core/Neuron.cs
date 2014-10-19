@@ -1,18 +1,24 @@
-﻿namespace AE.MachineLearning.NeuralNet.Core
+﻿using System.Runtime.Serialization;
+
+namespace AE.MachineLearning.NeuralNet.Core
 {
+    [DataContract]
     public class Neuron
     {
-        private readonly IActivation _activation;
+        public IActivation Activation { get; set; }
 
         public Neuron(IActivation activation)
         {
-            _activation = activation;
+            Activation = activation;
         }
 
+        [DataMember]
         public double[] Weights { get; set; }
 
+        [DataMember]
         public double Bias { get; set; }
 
+        [DataMember]
         public double Output { get; private set; }
 
         public void CalculateOutput(double[] input)
@@ -32,7 +38,7 @@
 
             result = result + Bias;
 
-            Output = _activation.CalculateActivate(result);
+            Output = Activation.CalculateActivate(result);
         }
     }
 }

@@ -37,7 +37,6 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
         public void Run()
         {
-            
             Writelog("Starting Run");
 
             var data = new HandandWrittenDataLoader();
@@ -45,16 +44,26 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
             NeuralNetwork netWork = CreateNetwork(_networkFile, data);
 
-           
 
             //Write Network init
-
-
             _learningRate = .9;
             _momentum = 0.0;
+            Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
             Writelog(string.Format("Begining training using learning rate {0}, momentum {1}", _learningRate, _momentum));
-            new BackPropagationTraining(netWork, new SquaredCostFunction()).Train(data.Inputs, data.Outputs,
-                                                                                  _learningRate, _momentum);
+            var trainingAlgorithm = new BackPropagationTraining(netWork, new SquaredCostFunction())
+                {
+                    LogWriter = RunLogWriter
+                };
+            trainingAlgorithm.Train(data.Inputs, data.Outputs,
+                                    _learningRate, _momentum);
+
+            Writelog(string.Format("Running prediction with test records rows {0} columns {1}", data.TestInputs.Length,
+                                   data.TestInputs[0].Length));
+            double[][] prediction = trainingAlgorithm.Predict(data.TestInputs);
+
+            data.WriteData(_testFile, prediction, Path.Combine(_outDir, "predictions.csv"));
+
+            Writelog("Procesing complete");
         }
 
 
@@ -63,7 +72,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             RunLogWriter.WriteLine("{0} - {1}", DateTime.Now, message);
         }
 
-        private static NeuralNetwork CreateNetwork(string networkFile, HandandWrittenDataLoader data)
+        private NeuralNetwork CreateNetwork(string networkFile, HandandWrittenDataLoader data)
         {
             NeuralNetwork netWork;
             if (networkFile == null)
@@ -75,8 +84,10 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
             else
             {
-                netWork = PersistanceHelper.Deseralise<NeuralNetwork>(networkFile);
+                netWork = new NeuralNetwork().LoadNetwork(networkFile, new HyperTanActivation());
             }
+
+            netWork.PersistNetwork(Path.Combine(_outDir, "NetworkOut.xml"));
             return netWork;
         }
 
@@ -87,7 +98,11 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
             if (isDisposing)
             {
-                if (_writer != null) _writer.Dispose();
+                if (_writer != null)
+                {
+                    _writer.Flush();
+                    _writer.Dispose();
+                }
             }
 
             _isDisposed = true;
