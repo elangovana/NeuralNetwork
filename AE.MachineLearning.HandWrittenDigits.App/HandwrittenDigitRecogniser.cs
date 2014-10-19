@@ -37,7 +37,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             GC.SuppressFinalize(this);
         }
 
-        public void Run(int maxIteration = 10000)
+        public void Run(int maxIteration = 10000, double maxError = .05)
         {
             Writelog("Starting Run");
 
@@ -48,7 +48,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
 
             //Write Network init
-            BackPropagationTraining trainingAlgorithm = Train(data, netWork, maxIteration);
+            BackPropagationTraining trainingAlgorithm = Train(data, netWork, maxIteration, maxError);
 
             Predict(data, trainingAlgorithm);
 
@@ -64,11 +64,11 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             data.WriteData(_testFile, prediction, Path.Combine(_outDir, "predictions.csv"));
         }
 
-        private BackPropagationTraining Train(HandandWrittenDataLoader data, NeuralNetwork netWork, int maxIteration)
+        private BackPropagationTraining Train(HandandWrittenDataLoader data, NeuralNetwork netWork, int maxIteration, double maxError)
         {
            
             Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
-            Writelog(string.Format("Begining training using learning rate {0}, momentum {1}", _learningRate, _momentum));
+            Writelog(string.Format("Begining training using learning rate {0}, momentum {1}, maxIteration {2}, maxError {3}", _learningRate, _momentum, maxIteration, maxError));
          
             var trainingAlgorithm = new BackPropagationTraining(netWork, new SquaredCostFunction())
                 {
@@ -76,7 +76,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
                 };
          
             trainingAlgorithm.Train(data.Inputs, data.Outputs,
-                                    _learningRate, _momentum,.05,maxIteration);
+                                    _learningRate, _momentum, maxError,maxIteration);
 
             netWork.PersistNetwork(Path.Combine(_outDir, "NetworkFinal.xml"));
             return trainingAlgorithm;
