@@ -77,6 +77,8 @@ namespace AE.MachineLearning.HandWrittenDigits.App
          
             trainingAlgorithm.Train(data.Inputs, data.Outputs,
                                     _learningRate, _momentum,.05,maxIteration);
+
+            netWork.PersistNetwork(Path.Combine(_outDir, "NetworkFinal.xml"));
             return trainingAlgorithm;
         }
 
@@ -101,7 +103,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
                 netWork = new NeuralNetwork().LoadNetwork(networkFile, new HyperTanActivation());
             }
 
-            netWork.PersistNetwork(Path.Combine(_outDir, "NetworkOut.xml"));
+            netWork.PersistNetwork(Path.Combine(_outDir, "NetworkInit.xml"));
             return netWork;
         }
 
