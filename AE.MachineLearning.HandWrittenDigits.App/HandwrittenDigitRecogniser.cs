@@ -11,17 +11,19 @@ namespace AE.MachineLearning.HandWrittenDigits.App
         private readonly string _testFile;
         private readonly string _trainFile;
         private bool _isDisposed;
-        private double _learningRate;
-        private double _momentum;
+        private readonly double _learningRate;
+        private readonly double _momentum;
         private StreamWriter _writer;
 
-        public HandwrittenDigitRecogniser(string trainFile, string testFile, string outDir, string networkFile = null)
+        public HandwrittenDigitRecogniser(string trainFile, string testFile, string outDir, double learningRate, double momentum,  string networkFile = null)
         {
             _trainFile = trainFile;
             _testFile = testFile;
             _outDir = Path.Combine(outDir, string.Format("Run{0}", DateTime.Now.ToString("yyyyMMddmmhhss")));
-            PersistanceHelper.SetUpDir(_outDir);
+            Helper.SetUpDir(_outDir);
             _networkFile = networkFile;
+            _learningRate = learningRate;
+            _momentum = momentum;
         }
 
         private StreamWriter RunLogWriter
@@ -46,24 +48,36 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
 
             //Write Network init
-            _learningRate = .9;
-            _momentum = 0.0;
-            Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
-            Writelog(string.Format("Begining training using learning rate {0}, momentum {1}", _learningRate, _momentum));
-            var trainingAlgorithm = new BackPropagationTraining(netWork, new SquaredCostFunction())
-                {
-                    LogWriter = RunLogWriter
-                };
-            trainingAlgorithm.Train(data.Inputs, data.Outputs,
-                                    _learningRate, _momentum);
+            BackPropagationTraining trainingAlgorithm = Train(data, netWork);
 
+            Predict(data, trainingAlgorithm);
+
+            Writelog("Procesing complete");
+        }
+
+        private void Predict(HandandWrittenDataLoader data, BackPropagationTraining trainingAlgorithm)
+        {
             Writelog(string.Format("Running prediction with test records rows {0} columns {1}", data.TestInputs.Length,
                                    data.TestInputs[0].Length));
             double[][] prediction = trainingAlgorithm.Predict(data.TestInputs);
 
             data.WriteData(_testFile, prediction, Path.Combine(_outDir, "predictions.csv"));
+        }
 
-            Writelog("Procesing complete");
+        private BackPropagationTraining Train(HandandWrittenDataLoader data, NeuralNetwork netWork)
+        {
+           
+            Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
+            Writelog(string.Format("Begining training using learning rate {0}, momentum {1}", _learningRate, _momentum));
+         
+            var trainingAlgorithm = new BackPropagationTraining(netWork, new SquaredCostFunction())
+                {
+                    LogWriter = RunLogWriter
+                };
+         
+            trainingAlgorithm.Train(data.Inputs, data.Outputs,
+                                    _learningRate, _momentum);
+            return trainingAlgorithm;
         }
 
 

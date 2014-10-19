@@ -42,7 +42,7 @@ namespace BackPropagation
                 Helpers.ShowVector(tValues, 4, true);
 
                 double eta = 0.90;  // learning rate - controls the maginitude of the increase in the change in weights. found by trial and error.
-                double alpha = 0.00; // momentum - to discourage oscillation. found by trial and error.
+                double alpha = 0.20; // momentum - to discourage oscillation. found by trial and error.
                 Console.WriteLine("Setting learning rate (eta) = " + eta.ToString("F2") + " and momentum (alpha) = " + alpha.ToString("F2"));
 
                 Console.WriteLine("\nEntering main back-propagation compute-update cycle");
@@ -171,6 +171,7 @@ namespace BackPropagation
                     double delta = eta * hGrads[j] * inputs[i]; // compute the new delta
                     ihWeights[i][j] += delta; // update
                     ihWeights[i][j] += alpha * ihPrevWeightsDelta[i][j]; // add momentum using previous delta. on first pass old value will be 0.0 but that's OK.
+                    ihPrevWeightsDelta[i][j] = delta;
                 }
             }
 
@@ -180,6 +181,7 @@ namespace BackPropagation
                 double delta = eta * hGrads[i] * 1.0; // the 1.0 is the constant input for any bias; could leave out
                 ihBiases[i] += delta;
                 ihBiases[i] += alpha * ihPrevBiasesDelta[i];
+                ihPrevBiasesDelta[i] = delta;
             }
 
             // 4. update hidden to output weights

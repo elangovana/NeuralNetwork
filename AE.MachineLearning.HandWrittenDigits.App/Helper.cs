@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace AE.MachineLearning.HandWrittenDigits.App
 {
-    public class PersistanceHelper
+    public class Helper
     {
         public static void SetUpDir(string outDir)
         {

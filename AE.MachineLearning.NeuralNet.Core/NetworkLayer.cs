@@ -32,7 +32,7 @@ namespace AE.MachineLearning.NeuralNet.Core
         {
             _numOfNeurons = numOfNeurons;
             _numberOfInputsPerNeuron = numberOfInputsPerNeuron;
-            Activation = activation;
+            _activation = activation;
             _isInputLayer = isInputLayer;
             _neurons = new Neuron[numOfNeurons];
             for (int i = 0; i < Neurons.Length; i++)

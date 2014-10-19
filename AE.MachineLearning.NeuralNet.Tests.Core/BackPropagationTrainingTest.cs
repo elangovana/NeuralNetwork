@@ -30,7 +30,7 @@ namespace AE.MachineLearning.NeuralNet.Tests.Core
         }
 
         [TestMethod]
-        public void ShouldTrainShouldComputeCorrectly()
+        public void ShouldTrainWithNoMomentum()
         {
             //Arrange
             var sut = new BackPropagationTraining(_network, new SquaredCostFunction());
@@ -48,11 +48,38 @@ namespace AE.MachineLearning.NeuralNet.Tests.Core
             }
 
             //Act
-            sut.Train(inputs, outputs, .90, 0.0);
+            sut.Train(inputs, outputs, .90, 0.0,0.0,1);
 
             //Assert
             Assert.AreEqual(-.8932, Math.Round(_network.NetworkLayers[_oIndex].Neurons[0].Output, 4));
             Assert.AreEqual(-.8006, Math.Round(_network.NetworkLayers[_oIndex].Neurons[1].Output, 4));
+        }
+
+
+        [TestMethod]
+        public void ShouldTrainWithMometum()
+        {
+            //Arrange
+            var sut = new BackPropagationTraining(_network, new SquaredCostFunction());
+            var inputs = new double[1][];
+            for (int index = 0; index < inputs.Length; index++)
+            {
+                inputs[index] = new[] { 1.0, 2.0, 3.0 };
+            }
+
+
+            var outputs = new double[1][];
+            for (int i = 0; i < outputs.Length; i++)
+            {
+                outputs[i] = new[] { -.85, .7500 };
+            }
+
+            //Act
+            sut.Train(inputs, outputs, .90, 0.2,0.0000,5);
+
+            //Assert
+            Assert.AreEqual(-.8859, Math.Round(_network.NetworkLayers[_oIndex].Neurons[0].Output, 4));
+            Assert.AreEqual(.8460, Math.Round(_network.NetworkLayers[_oIndex].Neurons[1].Output, 4));
         }
     }
 }
