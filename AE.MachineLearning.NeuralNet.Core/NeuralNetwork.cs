@@ -22,7 +22,7 @@ namespace AE.MachineLearning.NeuralNet.Core
         }
 
         /// <summary>
-        ///     Constructs a new neural network.
+        ///     Constructs a new fully connected neural network.
         /// </summary>
         /// <param name="numberOfInputFeatureFeatures">The number of input features</param>
         /// <param name="numberOfOutputs">The number of outputs</param>
@@ -155,7 +155,7 @@ namespace AE.MachineLearning.NeuralNet.Core
                     {
                         layerWeights[nu][w] = random.NextDouble();
                     }
-                    biases[nu] = random.NextDouble();
+                    biases[nu] = random.Next(-1, 1);
                 }
                 SetWeightsForLayer(nw, layerWeights, biases);
             }
