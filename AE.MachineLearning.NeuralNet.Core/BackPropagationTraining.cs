@@ -78,7 +78,7 @@ namespace AE.MachineLearning.NeuralNet.Core
 
             for (int index = 0; index < inputs.Length; index++)
             {
-                double error;
+                double error = 0.0;
                 int iter = 0;
 
                 do
@@ -87,8 +87,9 @@ namespace AE.MachineLearning.NeuralNet.Core
                     _network.ComputeOutput(inputs[index]);
 
                     //Cal errror to keep going :-)
-                    error = CalcError(targetOutputs[index], _network.GetOutput());
+                    error += CalcError(targetOutputs[index], _network.GetOutput());
 
+                   error = error /(iter + 1) ;
                     //Compute gradient for output layer
                     int nw = _network.NetworkLayers.Length - 1;
                     _gradients[nw] = ComputeGradientOutput(_network.NetworkLayers[nw], targetOutputs[index]);
@@ -210,7 +211,7 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         private static double CalcError(double[] target, double[] output)
         {
-            return target.Select((t, i) => Math.Abs(t - output[i])).Sum();
+            return (target.Select((t, i) => Math.Abs(t - output[i])).Sum());
         }
 
         private void WriteLog(string message)
