@@ -45,7 +45,6 @@
     <Compile Include="InputActivation.cs" />
     <Compile Include="HyperTanActivation.cs" />
     <Compile Include="IActivation.cs" />
-    <Compile Include="INeuralNetwork.cs" />
     <Compile Include="NetworkLayer.cs" />
     <Compile Include="NeuralNetException.cs" />
     <Compile Include="NeuralNetwork.cs" />
