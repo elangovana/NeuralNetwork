@@ -80,7 +80,7 @@ namespace AE.MachineLearning.NeuralNet.Core
             {
                 double error = 0.0;
                 int iter = 0;
-                var totalGradientChange = 0.0;
+                double totalGradientChange = 0.0;
                 do
                 {
                     //Compute output
@@ -89,7 +89,7 @@ namespace AE.MachineLearning.NeuralNet.Core
                     //Cal errror to keep going :-)
                     error += CalcError(targetOutputs[index], _network.GetOutput());
 
-                   error = error /(iter + 1) ;
+                    error = error/(iter + 1);
                     //Compute gradient for output layer
                     int nw = _network.NetworkLayers.Length - 1;
                     _gradients[nw] = ComputeGradientOutput(_network.NetworkLayers[nw], targetOutputs[index]);
@@ -103,11 +103,12 @@ namespace AE.MachineLearning.NeuralNet.Core
 
 
                     //Update Weights
-                    totalGradientChange= UpdateWeights(learningRate, momentum);
+                    totalGradientChange = UpdateWeights(learningRate, momentum);
 
                     iter++;
                 } while (error > maxError && iter < maxIteration);
-                WriteLog(string.Format("Input Index {2}, Iteration {0} - Error {1}, Total Gradient Change{3}", iter, error, index, totalGradientChange));
+                WriteLog(string.Format("Input Index {2}, Iteration {0} - Error {1}, Total Gradient Change{3}", iter,
+                                       error, index, totalGradientChange));
             }
         }
 
@@ -187,18 +188,18 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         private double UpdateWeights(double learningRate, double momentum)
         {
-            var totalGradient = 0.0;
+            double totalGradient = 0.0;
             for (int nw = 1; nw < _network.NetworkLayers.Length; nw++)
             {
                 NetworkLayer layer = _network.NetworkLayers[nw];
                 for (int nu = 0; nu < layer.Neurons.Length; nu++)
                 {
                     Neuron neuron = layer.Neurons[nu];
-                    totalGradient += _gradients[nw][nu];
+                    totalGradient += Math.Abs(_gradients[nw][nu]);
                     double deltaBias = learningRate*_gradients[nw][nu];
                     neuron.Bias += deltaBias + momentum*_previousDeltaBias[nw][nu];
                     _previousDeltaBias[nw][nu] = deltaBias;
-               
+
                     for (int w = 0; w < neuron.Weights.Length; w++)
                     {
                         // gradient of for this neuron * input for this neuron
