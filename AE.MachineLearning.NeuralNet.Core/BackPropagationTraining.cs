@@ -80,7 +80,7 @@ namespace AE.MachineLearning.NeuralNet.Core
             {
                 double error = 0.0;
                 int iter = 0;
-
+                var totalGradientChange = 0.0;
                 do
                 {
                     //Compute output
@@ -103,11 +103,11 @@ namespace AE.MachineLearning.NeuralNet.Core
 
 
                     //Update Weights
-                    UpdateWeights(learningRate, momentum);
+                    totalGradientChange= UpdateWeights(learningRate, momentum);
 
                     iter++;
                 } while (error > maxError && iter < maxIteration);
-                WriteLog(string.Format("Input Index {2}, Iteration {0} - Error {1}", iter, error, index));
+                WriteLog(string.Format("Input Index {2}, Iteration {0} - Error {1}, Total Gradient Change{3}", iter, error, index, totalGradientChange));
             }
         }
 
@@ -185,18 +185,20 @@ namespace AE.MachineLearning.NeuralNet.Core
             return gradientToCompute;
         }
 
-        private void UpdateWeights(double learningRate, double momentum)
+        private double UpdateWeights(double learningRate, double momentum)
         {
+            var totalGradient = 0.0;
             for (int nw = 1; nw < _network.NetworkLayers.Length; nw++)
             {
                 NetworkLayer layer = _network.NetworkLayers[nw];
                 for (int nu = 0; nu < layer.Neurons.Length; nu++)
                 {
                     Neuron neuron = layer.Neurons[nu];
+                    totalGradient += _gradients[nw][nu];
                     double deltaBias = learningRate*_gradients[nw][nu];
                     neuron.Bias += deltaBias + momentum*_previousDeltaBias[nw][nu];
                     _previousDeltaBias[nw][nu] = deltaBias;
-
+               
                     for (int w = 0; w < neuron.Weights.Length; w++)
                     {
                         // gradient of for this neuron * input for this neuron
@@ -206,6 +208,8 @@ namespace AE.MachineLearning.NeuralNet.Core
                     }
                 }
             }
+
+            return totalGradient;
         }
 
 
