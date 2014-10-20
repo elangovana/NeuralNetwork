@@ -7,17 +7,19 @@ namespace AE.MachineLearning.NeuralNet.Core
     public class BackPropagationTraining
     {
         private const double Error = .01;
-        private readonly ICostFunction _costFunction;
+        private readonly IGradientCalculator _gradientCalculator;
+
         private readonly double[][] _gradients;
         private readonly NeuralNetwork _network;
         private int _flushCounter;
         private double[][] _previousDeltaBias;
         private double[][][] _previousDeltaWeight;
 
-        public BackPropagationTraining(NeuralNetwork network, ICostFunction costFunction)
+        public BackPropagationTraining(NeuralNetwork network, IGradientCalculator gradientCalculator)
         {
             _network = network;
-            _costFunction = costFunction;
+            _gradientCalculator = gradientCalculator;
+
             _gradients = new double[network.NetworkLayers.Length][];
 
 
@@ -81,8 +83,6 @@ namespace AE.MachineLearning.NeuralNet.Core
 
                 do
                 {
-                   
-
                     //Compute output
                     _network.ComputeOutput(inputs[index]);
 
@@ -103,11 +103,10 @@ namespace AE.MachineLearning.NeuralNet.Core
 
                     //Update Weights
                     UpdateWeights(learningRate, momentum);
-                    
+
                     iter++;
                 } while (error > maxError && iter < maxIteration);
                 WriteLog(string.Format("Input Index {2}, Iteration {0} - Error {1}", iter, error, index));
-
             }
         }
 
@@ -143,13 +142,10 @@ namespace AE.MachineLearning.NeuralNet.Core
         {
             var gradientToCompute = new double[outputLayer.NumOfNeurons];
 
-            IActivation activationFunction = outputLayer.Activation;
             for (int n = 0; n < gradientToCompute.Length; ++n)
             {
-                double derivativeActivation = activationFunction.CalculateDerivative(outputLayer.Neurons[n].Output);
-                gradientToCompute[n] = derivativeActivation*
-                                       _costFunction.DerivativeCostWrtOutput(
-                                           outputValues[n], outputLayer.Neurons[n].Output);
+                gradientToCompute[n] = _gradientCalculator.CalculateGradientOutputLayer(outputValues[n],
+                                                                                        outputLayer.Neurons[n].Output);
             }
 
             return gradientToCompute;

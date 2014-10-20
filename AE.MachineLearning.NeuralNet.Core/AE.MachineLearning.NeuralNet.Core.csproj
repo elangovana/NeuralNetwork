@@ -41,7 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackPropagationTraining.cs" />
+    <Compile Include="EntropyLossGradientCalc.cs" />
+    <Compile Include="GradientSquaredLossCalculator.cs" />
     <Compile Include="ICostFunction.cs" />
+    <Compile Include="IGradientCalculator.cs" />
     <Compile Include="InputActivation.cs" />
     <Compile Include="HyperTanActivation.cs" />
     <Compile Include="IActivation.cs" />

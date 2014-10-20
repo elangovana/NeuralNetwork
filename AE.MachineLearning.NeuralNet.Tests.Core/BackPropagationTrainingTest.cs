@@ -9,6 +9,7 @@ namespace AE.MachineLearning.NeuralNet.Tests.Core
     {
         private NeuralNetwork _network;
         private int _oIndex;
+        private GradientSquaredLossCalculator _gradientSquaredLossCalculator;
 
         [TestInitialize]
         public void TestInit()
@@ -27,13 +28,17 @@ namespace AE.MachineLearning.NeuralNet.Tests.Core
             _network.SetWeightsForLayer(2, weightsOutput, new[] {-2.5, -5.0});
 
             _oIndex = 2;
+
+
+            _gradientSquaredLossCalculator = new GradientSquaredLossCalculator(new HyperTanActivation());
         }
 
         [TestMethod]
         public void ShouldTrainWithNoMomentum()
         {
             //Arrange
-            var sut = new BackPropagationTraining(_network, new SquaredCostFunction());
+           
+            var sut = new BackPropagationTraining(_network, _gradientSquaredLossCalculator);
             var inputs = new double[2][];
             for (int index = 0; index < inputs.Length; index++)
             {
@@ -60,7 +65,7 @@ namespace AE.MachineLearning.NeuralNet.Tests.Core
         public void ShouldTrainWithMometum()
         {
             //Arrange
-            var sut = new BackPropagationTraining(_network, new SquaredCostFunction());
+            var sut = new BackPropagationTraining(_network, _gradientSquaredLossCalculator);
             var inputs = new double[1][];
             for (int index = 0; index < inputs.Length; index++)
             {

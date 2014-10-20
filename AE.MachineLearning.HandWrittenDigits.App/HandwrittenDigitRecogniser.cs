@@ -70,7 +70,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
             Writelog(string.Format("Begining training using learning rate {0}, momentum {1}, maxIteration {2}, maxError {3}", _learningRate, _momentum, maxIteration, maxError));
          
-            var trainingAlgorithm = new BackPropagationTraining(netWork, new SquaredCostFunction())
+            var trainingAlgorithm = new BackPropagationTraining(netWork, new EntropyLossGradientCalc(new HyperTanActivation()) )
                 {
                     LogWriter = RunLogWriter
                 };

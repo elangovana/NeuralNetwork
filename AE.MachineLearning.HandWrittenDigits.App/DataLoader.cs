@@ -22,19 +22,31 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             //Set IO for train
             Inputs = new double[dataEntries.Count][];
             Outputs = new double[dataEntries.Count][];
+            EncodeOutput(dataEntries);
+
+            TestInputs = ParseFile(testFile).ToArray();
+        }
+
+        private void EncodeOutput(List<double[]> dataEntries)
+        {
+            const int outputClasses = 10;
+
             for (int r = 0; r < dataEntries.Count; r++)
             {
                 double[] entry = dataEntries[r];
-                Outputs[r] = new double[10];
+                Outputs[r] = new double[outputClasses];
                 Inputs[r] = new double[entry.Length - 1];
-                Outputs[r][(int) entry[0]] = 1.0;
+                //Init all classes to -1
+                for (int o = 0; o < outputClasses; o++)
+                {
+                    Outputs[r][o] = -1.0;
+                }
+                Outputs[r][(int)entry[0]] = 1.0;
                 for (int c = 1; c < entry.Length; c++)
                 {
                     Inputs[r][c - 1] = entry[c];
                 }
             }
-
-            TestInputs = ParseFile(testFile).ToArray();
         }
 
 
