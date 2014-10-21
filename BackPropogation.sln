@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.Core", "AE.MachineLearning.NeuralNet.Core\AE.MachineLearning.NeuralNet.Core.csproj", "{AFEEE0BD-0A9F-4207-9637-3EA7035DC716}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}"
@@ -30,10 +28,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{8E384ABA-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GoodResults", "GoodResults", "{69C294F0-DC56-4004-882F-8E4338EC31C7}"
 	ProjectSection(SolutionItems) = preProject
-		data\output\Run20141020411000\NetworkFinal.xml = data\output\Run20141020411000\NetworkFinal.xml
-		data\output\Run20141020411000\NetworkInit.xml = data\output\Run20141020411000\NetworkInit.xml
-		data\output\Run20141020411000\predictions.csv = data\output\Run20141020411000\predictions.csv
-		data\output\Run20141020411000\Runlog.txt = data\output\Run20141020411000\Runlog.txt
+		Data\GoodResults\NetworkFinal.xml = Data\GoodResults\NetworkFinal.xml
+		Data\GoodResults\NetworkInit.xml = Data\GoodResults\NetworkInit.xml
+		Data\GoodResults\predictions.csv = Data\GoodResults\predictions.csv
+		Data\GoodResults\Runlog.txt = Data\GoodResults\Runlog.txt
 	EndProjectSection
 EndProject
 Global
