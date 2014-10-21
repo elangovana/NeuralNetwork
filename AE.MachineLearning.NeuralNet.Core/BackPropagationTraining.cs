@@ -103,12 +103,13 @@ namespace AE.MachineLearning.NeuralNet.Core
 
 
                     //Update Weights
-                    totalGradientChange = UpdateWeights(learningRate, momentum);
+                    totalGradientChange += UpdateWeights(learningRate, momentum);
+                    totalGradientChange = totalGradientChange/(iter + 1);
 
                     iter++;
-                } while (error > maxError && iter < maxIteration);
-                WriteLog(string.Format("Input Index {2}, Iteration {0} - Error {1}, Total Gradient Change{3}", iter,
-                                       error, index, totalGradientChange));
+                } while (totalGradientChange > maxError && iter < maxIteration);
+                WriteLog(string.Format("Input Index {2}, Iteration {0}, Average Error {1}, Total Gradient Change {3}", iter,
+                                       error, index, totalGradientChange.ToString("F5")));
             }
         }
 
