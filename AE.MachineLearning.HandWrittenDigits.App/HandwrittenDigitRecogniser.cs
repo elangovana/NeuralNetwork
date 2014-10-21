@@ -52,6 +52,8 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
             Predict(data, trainingAlgorithm);
 
+           
+
             Writelog("Procesing complete");
         }
 
@@ -62,6 +64,13 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             double[][] prediction = trainingAlgorithm.Predict(data.TestInputs);
 
             data.WriteData(_testFile, prediction, Path.Combine(_outDir, "predictions.csv"));
+
+            var percentageCorrect = 0.0;
+            if (data.GetCorrectTestRate(prediction, out percentageCorrect))
+            {
+                Writelog(string.Format("Percentage correct prediction {0}", percentageCorrect.ToString("F4")));
+            }
+           
         }
 
         private BackPropagationTraining Train(HandandWrittenDataLoader data, NeuralNetwork netWork, int maxIteration, double maxError)

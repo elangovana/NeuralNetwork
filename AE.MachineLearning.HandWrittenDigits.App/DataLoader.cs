@@ -15,36 +15,77 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
         public double[][] Outputs { get; private set; }
 
+        int[] TestOutputs { get;  set; }
 
         public void LoadData(string trainFile, string testFile)
         {
             List<double[]> dataEntries = ParseFile(trainFile);
             //Set IO for train
-            Inputs = new double[dataEntries.Count][];
-            Outputs = new double[dataEntries.Count][];
-            EncodeOutput(dataEntries);
+            double[][] inputs;
+            double[][] outputs;
+            EncodeOutput(dataEntries, out inputs,  out outputs);
 
-            TestInputs = ParseFile(testFile).ToArray();
+            Inputs = inputs;
+            Outputs = outputs;
+
+            ProcessTestInputs(testFile, Inputs[0].Length);
         }
 
-        private void EncodeOutput(List<double[]> dataEntries)
+        public bool GetCorrectTestRate(double[][] outputs, out double percentageRate)
+        {
+            percentageRate = 0.0;
+            if (TestOutputs == null) return false;
+
+            int totalCorrect = outputs.Where((t, r) => TestOutputs[r] == GetDigit(t)).Count();
+
+            percentageRate = (totalCorrect/(double)outputs.Length)*100.0;
+            return true;
+        }
+
+        private void ProcessTestInputs(string testFile, int inputLength)
+        {
+       
+            var testInputs = ParseFile(testFile);
+
+            TestInputs = testInputs.ToArray();
+            if (TestInputs[0].Length == inputLength ) return;
+
+            //The test data doenst contain any outputs
+
+            TestOutputs = new int[testInputs.Count];
+
+            for (int r = 0; r < testInputs.Count; r++)
+            {
+                TestOutputs[r] = (int) testInputs[r][0];
+            }
+
+
+            double[][] parsedInput;
+            double[][] parsedOutput;
+            EncodeOutput(testInputs, out  parsedInput, out  parsedOutput);
+
+            TestInputs = parsedInput;
+        }
+
+        private void EncodeOutput(List<double[]> dataEntries, out double[][] inputs, out double[][] outputs)
         {
             const int outputClasses = 10;
-
+            outputs = new double[dataEntries.Count][];
+            inputs = new double[dataEntries.Count][];
             for (int r = 0; r < dataEntries.Count; r++)
             {
                 double[] entry = dataEntries[r];
-                Outputs[r] = new double[outputClasses];
-                Inputs[r] = new double[entry.Length - 1];
+                outputs[r] = new double[outputClasses];
+                inputs[r] = new double[entry.Length - 1];
                 //Init all classes to -1
                 for (int o = 0; o < outputClasses; o++)
                 {
-                    Outputs[r][o] = -1.0;
+                    outputs[r][o] = -1.0;
                 }
-                Outputs[r][(int)entry[0]] = 1.0;
+                outputs[r][(int) entry[0]] = 1.0;
                 for (int c = 1; c < entry.Length; c++)
                 {
-                    Inputs[r][c - 1] = entry[c];
+                    inputs[r][c - 1] = entry[c];
                 }
             }
         }
@@ -58,21 +99,27 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
                 for (int i = 0; i < input.Length; i++)
                 {
-                    double maxProb = outputs[i].Max(x => x);
-
-                    int digit = -1;
-                    for (int j = 0; j < outputs[i].Length; j++)
-                    {
-                        if (Math.Round(outputs[i][j], 4) == Math.Round(maxProb, 4))
-                        {
-                            digit = j;
-                            break;
-                        }
-                    }
+                    var digit = GetDigit(outputs[i]);
 
                     writer.WriteLine("{0},{1}", digit, input[i]);
                 }
             }
+        }
+
+        private static int GetDigit(double[]outputs)
+        {
+            double maxProb = outputs.Max(x => x);
+
+            int digit = -1;
+            for (int j = 0; j < outputs.Length; j++)
+            {
+                if (Math.Round(outputs[j], 4) == Math.Round(maxProb, 4))
+                {
+                    digit = j;
+                    break;
+                }
+            }
+            return digit;
         }
 
         private static List<double[]> ParseFile(string dataFile)
