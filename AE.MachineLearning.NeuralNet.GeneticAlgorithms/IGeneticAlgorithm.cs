@@ -1,8 +1,9 @@
 ﻿using System.IO;
+using AE.MachineLearning.NeuralNet.Core;
 
-namespace AE.MachineLearning.NeuralNet.Core
+namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 {
-    internal interface IGeneticAlgorithm
+    public interface IGeneticAlgorithm
     {
         StreamWriter LogWriter { get; set; }
 

@@ -6,6 +6,8 @@ namespace AE.MachineLearning.NeuralNet.Core
     {
         StreamWriter LogWriter { get; set; }
 
+        AbstractNetwork Network { get; set; }
+
         /// <summary>
         ///     Trains the network
         /// </summary>

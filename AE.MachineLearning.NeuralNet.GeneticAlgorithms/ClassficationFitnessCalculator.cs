@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace AE.MachineLearning.NeuralNet.Core
+namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 {
     /// <summary>
     ///     Calculates Fitness by percentage correct

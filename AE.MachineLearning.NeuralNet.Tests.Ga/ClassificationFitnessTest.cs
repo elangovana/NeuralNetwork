@@ -1,5 +1,5 @@
 ﻿using System;
-using AE.MachineLearning.NeuralNet.Core;
+using AE.MachineLearning.NeuralNet.GeneticAlgorithms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AE.MachineLearning.NeuralNet.Tests.GeneticAlgorithms

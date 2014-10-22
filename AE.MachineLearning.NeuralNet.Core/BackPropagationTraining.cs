@@ -9,37 +9,40 @@ namespace AE.MachineLearning.NeuralNet.Core
         private const double Error = .01;
         private readonly IGradientCalculator _gradientCalculator;
 
-        private readonly double[][] _gradients;
-        private readonly AbstractNetwork _network;
+        private  double[][] _gradients;
+
         private int _flushCounter;
         private double[][] _previousDeltaBias;
         private double[][][] _previousDeltaWeight;
 
+        public BackPropagationTraining(IGradientCalculator gradientCalculator)
+        {
+            _gradientCalculator = gradientCalculator;
+        }
+
         public BackPropagationTraining(AbstractNetwork network, IGradientCalculator gradientCalculator)
         {
-            _network = network;
+            Network = network;
             _gradientCalculator = gradientCalculator;
 
-            _gradients = new double[network.NetworkLayers.Length][];
-
-
-            InitPreviousDeltas();
+          
         }
 
         public StreamWriter LogWriter { get; set; }
+        public AbstractNetwork Network { get; set; }
 
         private void InitPreviousDeltas()
         {
-            _previousDeltaWeight = new double[_network.NetworkLayers.Length][][];
-            _previousDeltaBias = new double[_network.NetworkLayers.Length][];
-            for (int nw = 0; nw < _network.NetworkLayers.Length; nw++)
+            _previousDeltaWeight = new double[Network.NetworkLayers.Length][][];
+            _previousDeltaBias = new double[Network.NetworkLayers.Length][];
+            for (int nw = 0; nw < Network.NetworkLayers.Length; nw++)
             {
-                _previousDeltaWeight[nw] = new double[_network.NetworkLayers[nw].Neurons.Length][];
-                _previousDeltaBias[nw] = new double[_network.NetworkLayers[nw].Neurons.Length];
+                _previousDeltaWeight[nw] = new double[Network.NetworkLayers[nw].Neurons.Length][];
+                _previousDeltaBias[nw] = new double[Network.NetworkLayers[nw].Neurons.Length];
 
-                for (int nu = 0; nu < _network.NetworkLayers[nw].Neurons.Length; nu++)
+                for (int nu = 0; nu < Network.NetworkLayers[nw].Neurons.Length; nu++)
                 {
-                    int lengthOfWeights = _network.NetworkLayers[nw].Neurons[nu].Weights.Length;
+                    int lengthOfWeights = Network.NetworkLayers[nw].Neurons[nu].Weights.Length;
                     _previousDeltaWeight[nw][nu] = new double[lengthOfWeights];
                 }
             }
@@ -57,17 +60,17 @@ namespace AE.MachineLearning.NeuralNet.Core
         public void Train(double[][] inputs, double[][] targetOutputs, double learningRate, double momentum,
                           double maxError = .05, int maxIteration = 10000)
         {
-            if (inputs.Any(x => x.Length != _network.NumberOfInputFeatures))
+            if (inputs.Any(x => x.Length != Network.NumberOfInputFeatures))
                 throw new NeuralNetException(
                     string.Format(
                         "Each item in the input array data must contain number of features specified in the constructor {0}",
-                        _network.NumberOfInputFeatures));
+                        Network.NumberOfInputFeatures));
 
-            if (targetOutputs.Any(x => x.Length != _network.NumberOfOutputs))
+            if (targetOutputs.Any(x => x.Length != Network.NumberOfOutputs))
                 throw new NeuralNetException(
                     string.Format(
                         "Each item in the output array data must contain number of output specified in the constructor {0}",
-                        _network.NumberOfOutputs));
+                        Network.NumberOfOutputs));
 
             if (inputs.Length != targetOutputs.Length)
                 throw new NeuralNetException(
@@ -75,6 +78,9 @@ namespace AE.MachineLearning.NeuralNet.Core
                         "The length {0} of the input vector does not match the length {1} of the target output vector",
                         inputs.Length, targetOutputs.Length));
 
+            _gradients = new double[Network.NetworkLayers.Length][];
+
+            InitPreviousDeltas();
 
             for (int index = 0; index < inputs.Length; index++)
             {
@@ -84,21 +90,21 @@ namespace AE.MachineLearning.NeuralNet.Core
                 do
                 {
                     //Compute output
-                    _network.ComputeOutput(inputs[index]);
+                    Network.ComputeOutput(inputs[index]);
 
                     //Cal errror to keep going :-)
-                    error += CalcError(targetOutputs[index], _network.GetOutput());
+                    error += CalcError(targetOutputs[index], Network.GetOutput());
 
                     error = error/(iter + 1);
                     //Compute gradient for output layer
-                    int nw = _network.NetworkLayers.Length - 1;
-                    _gradients[nw] = ComputeGradientOutput(_network.NetworkLayers[nw], targetOutputs[index]);
+                    int nw = Network.NetworkLayers.Length - 1;
+                    _gradients[nw] = ComputeGradientOutput(Network.NetworkLayers[nw], targetOutputs[index]);
 
                     //Compute gradient for rest of the layers
                     for (nw = nw - 1; nw > 0; nw--)
                     {
-                        _gradients[nw] = ComputeGradientHidden(_network.NetworkLayers[nw + 1], _gradients[nw + 1],
-                                                               _network.NetworkLayers[nw]);
+                        _gradients[nw] = ComputeGradientHidden(Network.NetworkLayers[nw + 1], _gradients[nw + 1],
+                                                               Network.NetworkLayers[nw]);
                     }
 
 
@@ -127,9 +133,9 @@ namespace AE.MachineLearning.NeuralNet.Core
             {
                 double[] input = inputs[i];
 
-                _network.ComputeOutput(input);
+                Network.ComputeOutput(input);
 
-                output[i] = _network.GetOutput();
+                output[i] = Network.GetOutput();
             }
 
             return output;
@@ -190,9 +196,9 @@ namespace AE.MachineLearning.NeuralNet.Core
         private double UpdateWeights(double learningRate, double momentum)
         {
             double totalGradient = 0.0;
-            for (int nw = 1; nw < _network.NetworkLayers.Length; nw++)
+            for (int nw = 1; nw < Network.NetworkLayers.Length; nw++)
             {
-                NetworkLayer layer = _network.NetworkLayers[nw];
+                NetworkLayer layer = Network.NetworkLayers[nw];
                 for (int nu = 0; nu < layer.Neurons.Length; nu++)
                 {
                     Neuron neuron = layer.Neurons[nu];
@@ -204,7 +210,7 @@ namespace AE.MachineLearning.NeuralNet.Core
                     for (int w = 0; w < neuron.Weights.Length; w++)
                     {
                         // gradient of for this neuron * input for this neuron
-                        double delta = learningRate*_gradients[nw][nu]*_network.NetworkLayers[nw - 1].Neurons[w].Output;
+                        double delta = learningRate*_gradients[nw][nu]*Network.NetworkLayers[nw - 1].Neurons[w].Output;
                         neuron.Weights[w] += delta + momentum*_previousDeltaWeight[nw][nu][w];
                         _previousDeltaWeight[nw][nu][w] = delta;
                     }

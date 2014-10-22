@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using AE.MachineLearning.NeuralNet.GeneticAlgorithms;
+using AE.MachineLearning.NeuralNet.Core;
 
-namespace AE.MachineLearning.NeuralNet.Core
+namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 {
-    internal class GeneticAlgorithm : IGeneticAlgorithm
+    public class GeneticAlgorithm : IGeneticAlgorithm
     {
         private readonly IFitnessCalculator _fitnessCalculator;
 
@@ -31,7 +30,11 @@ namespace AE.MachineLearning.NeuralNet.Core
             _fitnessCalculator = fitnessCalculator;
             _trainingAlgoritihm = trainingAlgoritihm;
             _networkFactory = networkFactory;
+            _networkFactory.NumberOfInputFeatures = numOfInputs;
+            _networkFactory.NumberOfOutputs = numOfOutputs;
             _sampler = new Sampler();
+            _sampler.NetworkFactory = networkFactory;
+
         }
 
         public StreamWriter LogWriter { get; set; }
@@ -59,11 +62,14 @@ namespace AE.MachineLearning.NeuralNet.Core
             AbstractNetwork optimumNetwork = null;
             for (int i = 0; i < samples.Length; i++)
             {
+                samples[i].InitNetworkWithRandomWeights();
+                _trainingAlgoritihm.Network = samples[i];
+
                 _trainingAlgoritihm.Train(trainInputs, trainOutputs, .01, .7);
 
                 double[][] actualOutput = _trainingAlgoritihm.Predict(testInputs);
 
-                double score = _fitnessCalculator.Calculator(testInputs, testOutputs);
+                double score = _fitnessCalculator.Calculator(testOutputs, actualOutput);
 
                 if (score > optimumScore)
                 {

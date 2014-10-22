@@ -37,6 +37,7 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
         {
             NetworkFactory.NumberOfHiddenLayers = numOfHiddenLayers;
             NetworkFactory.NumberOfneuronsForHiddenLayers = numOfNodesPerHiddenLayer;
+          
             AbstractNetwork network = NetworkFactory.CreateNetwork();
             return network;
         }

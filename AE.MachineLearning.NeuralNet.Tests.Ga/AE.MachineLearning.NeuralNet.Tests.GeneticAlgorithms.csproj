@@ -54,9 +54,14 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ClassificationFitnessTest.cs" />
+    <Compile Include="GeneticAlgorithmTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AE.MachineLearning.NeuralNet.Core\AE.MachineLearning.NeuralNet.Core.csproj">
+      <Project>{afeee0bd-0a9f-4207-9637-3ea7035dc716}</Project>
+      <Name>AE.MachineLearning.NeuralNet.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AE.MachineLearning.NeuralNet.GeneticAlgorithms\AE.MachineLearning.NeuralNet.GeneticAlgorithms.csproj">
       <Project>{445b538c-b106-4631-8ac6-84e32c3688a7}</Project>
       <Name>AE.MachineLearning.NeuralNet.GeneticAlgorithms</Name>
