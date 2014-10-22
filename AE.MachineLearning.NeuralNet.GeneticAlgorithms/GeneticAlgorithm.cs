@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using AE.MachineLearning.NeuralNet.GeneticAlgorithms;
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
-    internal class GeneticAlgorithm
+    internal class GeneticAlgorithm : IGeneticAlgorithm
     {
         private readonly IFitnessCalculator _fitnessCalculator;
 
         private readonly int _maxlayers;
         private readonly int _minLayer;
-        private readonly ITrainingAlgoritihm _trainingAlgoritihm;
         private readonly INetworkFactory _networkFactory;
+        private readonly ITrainingAlgoritihm _trainingAlgoritihm;
         private int _flushCounter;
         private int _numOfInputs;
 
         private int _numOfOutputs;
         private int _sampleSize = 10;
+        private readonly Sampler _sampler;
 
         public GeneticAlgorithm(int numOfInputs, int numOfOutputs, int minLayer, int maxlayers,
-                                IFitnessCalculator fitnessCalculator, ITrainingAlgoritihm trainingAlgoritihm, INetworkFactory networkFactory)
+                                IFitnessCalculator fitnessCalculator, ITrainingAlgoritihm trainingAlgoritihm,
+                                INetworkFactory networkFactory)
         {
             _numOfInputs = numOfInputs;
             _numOfOutputs = numOfOutputs;
@@ -28,6 +31,7 @@ namespace AE.MachineLearning.NeuralNet.Core
             _fitnessCalculator = fitnessCalculator;
             _trainingAlgoritihm = trainingAlgoritihm;
             _networkFactory = networkFactory;
+            _sampler = new Sampler();
         }
 
         public StreamWriter LogWriter { get; set; }
@@ -46,10 +50,10 @@ namespace AE.MachineLearning.NeuralNet.Core
         }
 
         public AbstractNetwork Optimise(double[][] trainInputs, double[][] trainOutputs, double[][] testInputs,
-                                      double[][] testOutputs)
+                                        double[][] testOutputs)
         {
             InitParams(trainInputs, trainOutputs);
-            AbstractNetwork[] samples = SampleNetworkPopulation(_sampleSize);
+            AbstractNetwork[] samples = _sampler.SampleNetworkPopulation(_minLayer, _maxlayers, 1, 100, _sampleSize);
 
             double optimumScore = 0.0;
             AbstractNetwork optimumNetwork = null;
@@ -71,30 +75,7 @@ namespace AE.MachineLearning.NeuralNet.Core
             return optimumNetwork;
         }
 
-        private AbstractNetwork[] SampleNetworkPopulation(int sampleSize, int? seed = null)
-        {
-            var sampledNetworks = new List<AbstractNetwork>();
-            Random random = seed == null ? new Random() : new Random(seed.Value);
-            for (int i = 0; i < sampleSize; i++)
-            {
-                int numOfHiddenLayers = random.Next(_minLayer, _maxlayers);
-
-                var numOfNodesPerHiddenLayer = new int[numOfHiddenLayers];
-
-               
-                for (int j = 0; j < numOfHiddenLayers; j++)
-                {
-                    numOfNodesPerHiddenLayer[j] = random.Next(1, 100);
-                }
-
-                _networkFactory.NumberOfHiddenLayers = numOfHiddenLayers;
-                _networkFactory.NumberOfneuronsForHiddenLayers = numOfNodesPerHiddenLayer;
-                sampledNetworks.Add(_networkFactory.CreateNetwork());
-            }
-
-            return sampledNetworks.ToArray();
-        }
-
+       
         private void InitParams(double[][] inputs, double[][] outputs)
         {
             _numOfInputs = inputs[0].Length;
