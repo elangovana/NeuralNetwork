@@ -57,6 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BackPropagationTrainingTest.cs" />
+    <Compile Include="ClassificationFitnessTest.cs" />
     <Compile Include="NeuralNetworkTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

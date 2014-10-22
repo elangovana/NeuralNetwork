@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using AE.MachineLearning.NeuralNet.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

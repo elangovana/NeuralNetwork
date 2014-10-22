@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackPropagationTraining.cs" />
+    <Compile Include="ClassficationFitnessCalculator.cs" />
     <Compile Include="EntropyLossGradientCalc.cs" />
+    <Compile Include="IFitnessCalculator.cs" />
     <Compile Include="GeneticAlgorithm.cs" />
     <Compile Include="GradientSquaredLossCalculator.cs" />
     <Compile Include="ICostFunction.cs" />

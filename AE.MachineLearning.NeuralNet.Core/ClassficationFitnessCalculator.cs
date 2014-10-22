@@ -1,0 +1,29 @@
+﻿using System;
+using System.Linq;
+
+namespace AE.MachineLearning.NeuralNet.Core
+{
+    /// <summary>
+    ///     Calculates Fitness by percentage correct
+    /// </summary>
+    public class ClassficationFitnessCalculator : IFitnessCalculator
+    {
+        public double Calculator(double[][] targetOutputs, double[][] outputs)
+        {
+            int totalCorrect = targetOutputs.Where((t, r) => GetDigit(t) == GetDigit(outputs[r])).Count();
+
+            return (totalCorrect*100.0)/outputs.Length;
+        }
+
+        private static int GetDigit(double[] entry)
+        {
+
+            for (int v = 0; v < entry.Length; v++)
+            {
+                if (Math.Round(entry[v], 4) == Math.Round(entry.Max(), 4)) return v;
+            }
+
+            return -1;
+        }
+    }
+}
