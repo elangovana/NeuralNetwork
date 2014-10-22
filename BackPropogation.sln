@@ -34,6 +34,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GoodResults", "GoodResults"
 		Data\GoodResults\Runlog.txt = Data\GoodResults\Runlog.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.Tests.GeneticAlgorithms", "AE.MachineLearning.NeuralNet.Tests.Ga\AE.MachineLearning.NeuralNet.Tests.GeneticAlgorithms.csproj", "{1F314091-64C3-4356-8CFC-11F439F78367}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.GeneticAlgorithms", "AE.MachineLearning.NeuralNet.GeneticAlgorithms\AE.MachineLearning.NeuralNet.GeneticAlgorithms.csproj", "{445B538C-B106-4631-8AC6-84E32C3688A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +64,14 @@ Global
 		{8BF85CEC-A6FA-4063-A94F-7F80798D562F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BF85CEC-A6FA-4063-A94F-7F80798D562F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BF85CEC-A6FA-4063-A94F-7F80798D562F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F314091-64C3-4356-8CFC-11F439F78367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F314091-64C3-4356-8CFC-11F439F78367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F314091-64C3-4356-8CFC-11F439F78367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F314091-64C3-4356-8CFC-11F439F78367}.Release|Any CPU.Build.0 = Release|Any CPU
+		{445B538C-B106-4631-8AC6-84E32C3688A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{445B538C-B106-4631-8AC6-84E32C3688A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{445B538C-B106-4631-8AC6-84E32C3688A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{445B538C-B106-4631-8AC6-84E32C3688A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +80,7 @@ Global
 		{F8733AAA-8A16-4D11-8257-43D05195DC9C} = {9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}
 		{5B2C15C4-6478-4CFF-859C-7B0082CF13E8} = {9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}
 		{8BF85CEC-A6FA-4063-A94F-7F80798D562F} = {9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}
+		{1F314091-64C3-4356-8CFC-11F439F78367} = {9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}
 		{69C294F0-DC56-4004-882F-8E4338EC31C7} = {8E384ABA-6A29-4B37-8B9A-7BC0E6625472}
 	EndGlobalSection
 EndGlobal

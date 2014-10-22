@@ -1,6 +1,6 @@
 ﻿namespace AE.MachineLearning.NeuralNet.Core
 {
-    internal interface INetworkFactory
+    public interface INetworkFactory
     {
         IActivation Activation { get; set; }
         int NumberOfInputFeatures { get; set; }
