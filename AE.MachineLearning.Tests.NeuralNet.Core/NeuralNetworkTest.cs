@@ -1,9 +1,9 @@
-﻿    using System;
+﻿using System;
 using AE.MachineLearning.NeuralNet.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace AE.MachineLearning.NeuralNet.Tests.Core
+namespace AE.MachineLearning.Tests.NeuralNet.Core
 {
     [TestClass]
     public class NeuralNetworkTest

@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8BF85CEC-A6FA-4063-A94F-7F80798D562F}</ProjectGuid>
+    <ProjectGuid>{1F314091-64C3-4356-8CFC-11F439F78367}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AE.MachineLearning.HandWrittenDigits.Test.App</RootNamespace>
-    <AssemblyName>AE.MachineLearning.HandWrittenDigits.Test.App</AssemblyName>
+    <RootNamespace>AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms</RootNamespace>
+    <AssemblyName>AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -53,26 +53,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="HandwrittenDigitRecogniserTest.cs" />
+    <Compile Include="ClassificationFitnessTest.cs" />
+    <Compile Include="GeneticAlgorithmTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="train.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="network.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AE.MachineLearning.HandWrittenDigitRecogniser\AE.MachineLearning.HandWrittenDigitRecogniser.csproj">
-      <Project>{b8b9cc2e-c810-452e-957f-749e5051dd4a}</Project>
-      <Name>AE.MachineLearning.HandWrittenDigitRecogniser</Name>
+    <ProjectReference Include="..\AE.MachineLearning.NeuralNet.Core\AE.MachineLearning.NeuralNet.Core.csproj">
+      <Project>{afeee0bd-0a9f-4207-9637-3ea7035dc716}</Project>
+      <Name>AE.MachineLearning.NeuralNet.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AE.MachineLearning.NeuralNet.GeneticAlgorithms\AE.MachineLearning.NeuralNet.GeneticAlgorithms.csproj">
+      <Project>{445b538c-b106-4631-8ac6-84e32c3688a7}</Project>
+      <Name>AE.MachineLearning.NeuralNet.GeneticAlgorithms</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F8733AAA-8A16-4D11-8257-43D05195DC9C}</ProjectGuid>
+    <ProjectGuid>{8BF85CEC-A6FA-4063-A94F-7F80798D562F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AE.MachineLearning.NeuralNet.Tests.Core</RootNamespace>
-    <AssemblyName>AE.MachineLearning.NeuralNet.Tests.Core</AssemblyName>
+    <RootNamespace>AE.MachineLearning.Tests.HandWrittenDigits</RootNamespace>
+    <AssemblyName>AE.MachineLearning.Tests.HandWrittenDigits</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,9 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Moq">
-      <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -56,18 +53,27 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="BackPropagationTrainingTest.cs" />
-    <Compile Include="NeuralNetworkTest.cs" />
+    <Compile Include="HandwrittenDigitRecogniserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AE.MachineLearning.NeuralNet.Core\AE.MachineLearning.NeuralNet.Core.csproj">
-      <Project>{afeee0bd-0a9f-4207-9637-3ea7035dc716}</Project>
-      <Name>AE.MachineLearning.NeuralNet.Core</Name>
-    </ProjectReference>
+    <None Include="test.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="train.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="network.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AE.MachineLearning.HandWrittenDigitRecogniser\AE.MachineLearning.HandWrittenDigitRecogniser.csproj">
+      <Project>{b8b9cc2e-c810-452e-957f-749e5051dd4a}</Project>
+      <Name>AE.MachineLearning.HandWrittenDigitRecogniser</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1F314091-64C3-4356-8CFC-11F439F78367}</ProjectGuid>
+    <ProjectGuid>{F8733AAA-8A16-4D11-8257-43D05195DC9C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AE.MachineLearning.NeuralNet.Tests.GeneticAlgorithms</RootNamespace>
-    <AssemblyName>AE.MachineLearning.NeuralNet.Tests.GeneticAlgorithms</AssemblyName>
+    <RootNamespace>AE.MachineLearning.Tests.NeuralNet.Core</RootNamespace>
+    <AssemblyName>AE.MachineLearning.Tests.NeuralNet.Core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -53,8 +56,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ClassificationFitnessTest.cs" />
-    <Compile Include="GeneticAlgorithmTest.cs" />
+    <Compile Include="BackPropagationTrainingTest.cs" />
+    <Compile Include="NeuralNetworkTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,10 +65,9 @@
       <Project>{afeee0bd-0a9f-4207-9637-3ea7035dc716}</Project>
       <Name>AE.MachineLearning.NeuralNet.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AE.MachineLearning.NeuralNet.GeneticAlgorithms\AE.MachineLearning.NeuralNet.GeneticAlgorithms.csproj">
-      <Project>{445b538c-b106-4631-8ac6-84e32c3688a7}</Project>
-      <Name>AE.MachineLearning.NeuralNet.GeneticAlgorithms</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

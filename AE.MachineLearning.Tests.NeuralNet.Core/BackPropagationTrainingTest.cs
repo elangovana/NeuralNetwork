@@ -2,7 +2,7 @@
 using AE.MachineLearning.NeuralNet.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AE.MachineLearning.NeuralNet.Tests.Core
+namespace AE.MachineLearning.Tests.NeuralNet.Core
 {
     [TestClass]
     public class BackPropagationTrainingTest

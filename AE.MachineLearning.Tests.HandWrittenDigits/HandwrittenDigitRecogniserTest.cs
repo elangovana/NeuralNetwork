@@ -1,9 +1,8 @@
 ﻿using System;
 using AE.MachineLearning.HandWrittenDigitRecogniser;
-using AE.MachineLearning.HandWrittenDigits;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AE.MachineLearning.HandWrittenDigits.Test.App
+namespace AE.MachineLearning.Tests.HandWrittenDigits
 {
     [TestClass]
     [DeploymentItem(TrainFile)]
