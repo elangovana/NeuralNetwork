@@ -1,5 +1,6 @@
 ﻿using System;
-using AE.MachineLearning.HandWrittenDigits.App;
+using AE.MachineLearning.HandWrittenDigitRecogniser;
+using AE.MachineLearning.HandWrittenDigits;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AE.MachineLearning.HandWrittenDigits.Test.App

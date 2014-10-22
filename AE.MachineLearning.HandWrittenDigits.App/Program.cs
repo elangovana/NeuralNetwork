@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AE.MachineLearning.HandWrittenDigitRecogniser;
 using AE.MachineLearning.NeuralNet.Core;
 
 namespace AE.MachineLearning.HandWrittenDigits.App

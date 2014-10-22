@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace AE.MachineLearning.HandWrittenDigits.App
+namespace AE.MachineLearning.HandWrittenDigitRecogniser
 {
     public class HandandWrittenDataLoader
     {

@@ -65,15 +65,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AE.MachineLearning.HandWrittenDigits.App\AE.MachineLearning.HandWrittenDigits.App.csproj">
-      <Project>{44dd5464-a696-4b92-97dc-eb6dcaf60ed8}</Project>
-      <Name>AE.MachineLearning.HandWrittenDigits.App</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="network.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AE.MachineLearning.HandWrittenDigitRecogniser\AE.MachineLearning.HandWrittenDigitRecogniser.csproj">
+      <Project>{b8b9cc2e-c810-452e-957f-749e5051dd4a}</Project>
+      <Name>AE.MachineLearning.HandWrittenDigitRecogniser</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

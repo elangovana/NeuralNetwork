@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{44DD5464-A696-4B92-97DC-EB6DCAF60ED8}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{B8B9CC2E-C810-452E-957F-749E5051DD4A}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AE.MachineLearning.HandWrittenDigits.App</RootNamespace>
-    <AssemblyName>AE.MachineLearning.HandWrittenDigits.App</AssemblyName>
+    <RootNamespace>AE.MachineLearning.HandWrittenDigitRecogniser</RootNamespace>
+    <AssemblyName>AE.MachineLearning.HandWrittenDigitRecogniser</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,7 +32,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,17 +39,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="DataLoader.cs" />
+    <Compile Include="HandwrittenDigitRecogniser.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AE.MachineLearning.HandWrittenDigitRecogniser\AE.MachineLearning.HandWrittenDigitRecogniser.csproj">
-      <Project>{b8b9cc2e-c810-452e-957f-749e5051dd4a}</Project>
-      <Name>AE.MachineLearning.HandWrittenDigitRecogniser</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AE.MachineLearning.NeuralNet.Core\AE.MachineLearning.NeuralNet.Core.csproj">
       <Project>{afeee0bd-0a9f-4207-9637-3ea7035dc716}</Project>
       <Name>AE.MachineLearning.NeuralNet.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AE.MachineLearning.NeuralNet.GeneticAlgorithms\AE.MachineLearning.NeuralNet.GeneticAlgorithms.csproj">
+      <Project>{445b538c-b106-4631-8ac6-84e32c3688a7}</Project>
+      <Name>AE.MachineLearning.NeuralNet.GeneticAlgorithms</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

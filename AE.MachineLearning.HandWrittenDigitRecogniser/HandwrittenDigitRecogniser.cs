@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.IO;
 using AE.MachineLearning.NeuralNet.Core;
 
-namespace AE.MachineLearning.HandWrittenDigits.App
+namespace AE.MachineLearning.HandWrittenDigitRecogniser
 {
     public class HandwrittenDigitRecogniser : IDisposable
     {
