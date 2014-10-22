@@ -6,6 +6,6 @@ namespace AE.MachineLearning.NeuralNet.Core
 {
     interface IFitnessCalculator
     {
-        double Calculator(double[][] inputs, double[][]outputs);
+        double Calculator(double[][] targetOutputs, double[][] actualOutputs);
     }
 }

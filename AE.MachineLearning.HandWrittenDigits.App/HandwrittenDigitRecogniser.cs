@@ -44,24 +44,24 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             var data = new HandandWrittenDataLoader();
             data.LoadData(_trainFile, _testFile);
 
-            NeuralNetwork netWork = CreateNetwork(_networkFile, data);
+            var netWork = CreateNetwork(_networkFile, data);
 
 
             //Write Network init
-            BackPropagationTraining trainingAlgorithm = Train(data, netWork, maxIteration, maxError);
+            BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, maxIteration, maxError);
 
-            Predict(data, trainingAlgorithm);
+            Predict(data, trainingAlgoritihmAlgorithm);
 
            
 
             Writelog("Procesing complete");
         }
 
-        private void Predict(HandandWrittenDataLoader data, BackPropagationTraining trainingAlgorithm)
+        private void Predict(HandandWrittenDataLoader data, BackPropagationTraining trainingAlgoritihmAlgorithm)
         {
             Writelog(string.Format("Running prediction with test records rows {0} columns {1}", data.TestInputs.Length,
                                    data.TestInputs[0].Length));
-            double[][] prediction = trainingAlgorithm.Predict(data.TestInputs);
+            double[][] prediction = trainingAlgoritihmAlgorithm.Predict(data.TestInputs);
 
             data.WriteData(_testFile, prediction, Path.Combine(_outDir, "predictions.csv"));
 
@@ -73,7 +73,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
            
         }
 
-        private BackPropagationTraining Train(HandandWrittenDataLoader data, NeuralNetwork netWork, int maxIteration, double maxError)
+        private BackPropagationTraining Train(HandandWrittenDataLoader data, AbstractNetwork netWork, int maxIteration, double maxError)
         {
            
             Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
@@ -97,9 +97,9 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             RunLogWriter.WriteLine("{0} - {1}", DateTime.Now, message);
         }
 
-        private NeuralNetwork CreateNetwork(string networkFile, HandandWrittenDataLoader data)
+        private AbstractNetwork CreateNetwork(string networkFile, HandandWrittenDataLoader data)
         {
-            NeuralNetwork netWork;
+            AbstractNetwork netWork;
             if (networkFile == null)
             {
                 netWork = new NeuralNetwork(data.Inputs[0].Length, data.Outputs[0].Length, 1, new[] {100},

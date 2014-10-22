@@ -40,17 +40,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractNetwork.cs" />
     <Compile Include="BackPropagationTraining.cs" />
     <Compile Include="ClassficationFitnessCalculator.cs" />
     <Compile Include="EntropyLossGradientCalc.cs" />
+    <Compile Include="FeedForwardLayerNeuralNetworkFactory.cs" />
     <Compile Include="IFitnessCalculator.cs" />
     <Compile Include="GeneticAlgorithm.cs" />
     <Compile Include="GradientSquaredLossCalculator.cs" />
     <Compile Include="ICostFunction.cs" />
     <Compile Include="IGradientCalculator.cs" />
+    <Compile Include="INetworkFactory.cs" />
     <Compile Include="InputActivation.cs" />
     <Compile Include="HyperTanActivation.cs" />
     <Compile Include="IActivation.cs" />
+    <Compile Include="ITrainingAlgoritihm.cs" />
     <Compile Include="NetworkLayer.cs" />
     <Compile Include="NeuralNetException.cs" />
     <Compile Include="NeuralNetwork.cs" />

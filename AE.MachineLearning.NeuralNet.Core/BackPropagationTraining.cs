@@ -4,18 +4,18 @@ using System.Linq;
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
-    public class BackPropagationTraining
+    public class BackPropagationTraining : ITrainingAlgoritihm
     {
         private const double Error = .01;
         private readonly IGradientCalculator _gradientCalculator;
 
         private readonly double[][] _gradients;
-        private readonly NeuralNetwork _network;
+        private readonly AbstractNetwork _network;
         private int _flushCounter;
         private double[][] _previousDeltaBias;
         private double[][][] _previousDeltaWeight;
 
-        public BackPropagationTraining(NeuralNetwork network, IGradientCalculator gradientCalculator)
+        public BackPropagationTraining(AbstractNetwork network, IGradientCalculator gradientCalculator)
         {
             _network = network;
             _gradientCalculator = gradientCalculator;

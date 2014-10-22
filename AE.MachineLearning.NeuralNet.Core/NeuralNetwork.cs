@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace AE.MachineLearning.NeuralNet.Core
 {
     [DataContract]
-    public class NeuralNetwork
+    public class NeuralNetwork : AbstractNetwork
     {
         [DataMember] private readonly int _numberOfHiddenLayers;
 
@@ -16,6 +16,7 @@ namespace AE.MachineLearning.NeuralNet.Core
         private IActivation _activationOutput;
 
         [DataMember] private NetworkLayer[] _networkLayers;
+        private IActivation _activation;
 
         public NeuralNetwork()
         {
@@ -38,8 +39,8 @@ namespace AE.MachineLearning.NeuralNet.Core
             _numberOfOutputs = numberOfOutputs;
             _numberOfHiddenLayers = numberOfHiddenLayers;
             _numberOfneuronsForHiddenLayers = numberOfneuronsForHiddenLayers;
-            Activation = activation;
-            ActivationOutput = activationOutput;
+            _activation = activation;
+            _activationOutput = activationOutput;
             if (numberOfneuronsForHiddenLayers.Length != numberOfHiddenLayers)
                 throw new NeuralNetException(
                     string.Format(
@@ -47,46 +48,50 @@ namespace AE.MachineLearning.NeuralNet.Core
                         numberOfneuronsForHiddenLayers.Length, numberOfHiddenLayers));
         }
 
-        public IActivation Activation { get; private set; }
+        public override IActivation Activation
+        {
+            get { return _activation; }
+   
+        }
 
 
-        public int NumberOfInputFeatures
+        public override int NumberOfInputFeatures
         {
             get { return _numberOfInputFeatures; }
         }
 
-        public int NumberOfOutputs
+        public override int NumberOfOutputs
         {
             get { return _numberOfOutputs; }
         }
 
-        public int NumberOfHiddenLayers
+        public override int NumberOfHiddenLayers
         {
             get { return _numberOfHiddenLayers; }
         }
 
-        public int[] NumberOfneuronsForHiddenLayers
+        public override int[] NumberOfneuronsForHiddenLayers
         {
             get { return _numberOfneuronsForHiddenLayers; }
         }
 
-        public NetworkLayer OutputLayer
+        public override NetworkLayer OutputLayer
         {
             get { return NetworkLayers[NumberOfHiddenLayers + 1]; }
         }
 
-        public NetworkLayer[] NetworkLayers
+        public override NetworkLayer[] NetworkLayers
         {
             get { return _networkLayers ?? (_networkLayers = ConstructNetwork()); }
         }
 
-        public IActivation ActivationOutput
+        public override IActivation ActivationOutput
         {
             get { return _activationOutput ?? Activation; }
-            private set { _activationOutput = value; }
+         
         }
 
-        public double[] GetOutput()
+        public override double[] GetOutput()
         {
             var output = new double[NumberOfOutputs];
 
@@ -100,7 +105,7 @@ namespace AE.MachineLearning.NeuralNet.Core
         }
 
 
-        public void ComputeOutput(double[] inputFeatures)
+        public override void ComputeOutput(double[] inputFeatures)
         {
             //Initially Previous layer out is the input itself
             var outPutOfPreviousLayer = new double[inputFeatures.Length];
@@ -133,13 +138,13 @@ namespace AE.MachineLearning.NeuralNet.Core
         /// <param name="layerIndex">The layer index. The input layer is index 0.</param>
         /// <param name="weights">A two dimensional array of weights. The first dimension is the number of neurons, and the second dimension is the number of weights per neuron.</param>
         /// <param name="biases">The bias array. The length of this array is equal to the number of neurons in this layer</param>
-        public void SetWeightsForLayer(int layerIndex, double[][] weights, double[] biases)
+        public override void SetWeightsForLayer(int layerIndex, double[][] weights, double[] biases)
         {
             NetworkLayers[layerIndex].SetWeights(weights, biases);
         }
 
 
-        public void InitNetworkWithRandomWeights(int? seed = default (int?))
+        public override void InitNetworkWithRandomWeights(int? seed = default (int?))
         {
             Random random = seed == null ? new Random() : new Random(seed.Value);
 
@@ -184,18 +189,18 @@ namespace AE.MachineLearning.NeuralNet.Core
             return layers;
         }
 
-        public void PersistNetwork(string fileName)
+        public override void PersistNetwork(string fileName)
         {
             PersistanceHelper.Serlialse(this, fileName);
         }
 
-        public NeuralNetwork LoadNetwork(string fileName, IActivation activation, IActivation outputActivation = null)
+        public override AbstractNetwork LoadNetwork(string fileName, IActivation activation, IActivation outputActivation = null)
         {
-            Activation = activation;
-            ActivationOutput = ActivationOutput;
+            _activation = activation;
+            _activationOutput = ActivationOutput;
 
             var networK = PersistanceHelper.Deseralise<NeuralNetwork>(fileName);
-
+    
             networK.NetworkLayers[0].Activation = new InputActivation();
 
             for (var i = 1; i < networK.NetworkLayers.Length -1 ; i++)
