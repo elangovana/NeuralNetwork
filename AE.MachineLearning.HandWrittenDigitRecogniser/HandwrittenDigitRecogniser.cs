@@ -1,21 +1,23 @@
 using System;
 using System.IO;
 using AE.MachineLearning.NeuralNet.Core;
+using AE.MachineLearning.NeuralNet.GeneticAlgorithms;
 
 namespace AE.MachineLearning.HandWrittenDigitRecogniser
 {
     public class HandwrittenDigitRecogniser : IDisposable
     {
+        private readonly double _learningRate;
+        private readonly double _momentum;
         private readonly string _networkFile;
         private readonly string _outDir;
         private readonly string _testFile;
         private readonly string _trainFile;
         private bool _isDisposed;
-        private readonly double _learningRate;
-        private readonly double _momentum;
         private StreamWriter _writer;
 
-        public HandwrittenDigitRecogniser(string trainFile, string testFile, string outDir, double learningRate, double momentum,   string networkFile = null)
+        public HandwrittenDigitRecogniser(string trainFile, string testFile, string outDir, double learningRate,
+                                          double momentum, string networkFile = null)
         {
             _trainFile = trainFile;
             _testFile = testFile;
@@ -44,7 +46,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             var data = new HandandWrittenDataLoader();
             data.LoadData(_trainFile, _testFile);
 
-            var netWork = CreateNetwork(_networkFile, data);
+            AbstractNetwork netWork = CreateNetwork(_networkFile, data);
 
 
             //Write Network init
@@ -52,10 +54,54 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
             Predict(data, trainingAlgoritihmAlgorithm);
 
-           
 
             Writelog("Procesing complete");
         }
+
+        public void RunGeneticAlgorithm()
+        {
+            var data = new HandandWrittenDataLoader();
+            data.LoadData(_trainFile, _testFile);
+
+            var feedForwardLayerNeuralNetworkFactory = new FeedForwardLayerNeuralNetworkFactory();
+            feedForwardLayerNeuralNetworkFactory.Activation = new HyperTanActivation();
+            var ga = new GeneticAlgorithm(data.Inputs[0].Length, data.Outputs[0].Length, 1, 10,
+                                          new ClassficationFitnessCalculator(),
+                                          new BackPropagationTraining(
+                                              new EntropyLossGradientCalc(new HyperTanActivation())),
+                                          feedForwardLayerNeuralNetworkFactory);
+
+            RunGa(ga,data.Inputs,data.Outputs);
+        }
+
+        public void RunGa(IGeneticAlgorithm ga, double[][] inputs, double[][] outputs)
+        {
+            //Split data into test and train 70% /30% rule
+
+            var noTests = (int) Math.Floor((inputs.Length*.7));
+            int notrain = inputs.Length - noTests;
+
+            var trainInputs = new double[noTests][];
+            var trainOutputs = new double[noTests][];
+            for (int i = 0; i < noTests; i++)
+            {
+                trainInputs[i] = inputs[i];
+                trainOutputs[i] = outputs[i];
+            }
+
+            var testInputs = new double[notrain][];
+            var testOutputs = new double[notrain][];
+            for (int i = noTests, j = 0; i < inputs.Length; i++ ,j++)
+            {
+                testInputs[j] = inputs[i];
+                testOutputs[j] = outputs[i];
+            }
+            ga.LogWriter = RunLogWriter;
+            ga.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
+
+            
+        }
+
 
         private void Predict(HandandWrittenDataLoader data, BackPropagationTraining trainingAlgoritihmAlgorithm)
         {
@@ -65,27 +111,30 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
             data.WriteData(_testFile, prediction, Path.Combine(_outDir, "predictions.csv"));
 
-            var percentageCorrect = 0.0;
+            double percentageCorrect = 0.0;
             if (data.GetCorrectTestRate(prediction, out percentageCorrect))
             {
                 Writelog(string.Format("Percentage correct prediction {0}", percentageCorrect.ToString("F4")));
             }
-           
         }
 
-        private BackPropagationTraining Train(HandandWrittenDataLoader data, AbstractNetwork netWork, int maxIteration, double maxError)
+        private BackPropagationTraining Train(HandandWrittenDataLoader data, AbstractNetwork netWork, int maxIteration,
+                                              double maxError)
         {
-           
             Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
-            Writelog(string.Format("Begining training using learning rate {0}, momentum {1}, maxIteration {2}, maxError {3}", _learningRate, _momentum, maxIteration, maxError));
-         
-            var trainingAlgorithm = new BackPropagationTraining(netWork, new EntropyLossGradientCalc(new HyperTanActivation()) )
+            Writelog(
+                string.Format(
+                    "Begining training using learning rate {0}, momentum {1}, maxIteration {2}, maxError {3}",
+                    _learningRate, _momentum, maxIteration, maxError));
+
+            var trainingAlgorithm = new BackPropagationTraining(netWork,
+                                                                new EntropyLossGradientCalc(new HyperTanActivation()))
                 {
                     LogWriter = RunLogWriter
                 };
-         
+
             trainingAlgorithm.Train(data.Inputs, data.Outputs,
-                                    _learningRate, _momentum, maxError,maxIteration);
+                                    _learningRate, _momentum, maxError, maxIteration);
 
             netWork.PersistNetwork(Path.Combine(_outDir, "NetworkFinal.xml"));
             return trainingAlgorithm;

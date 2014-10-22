@@ -14,6 +14,7 @@ namespace AE.MachineLearning.Tests.HandWrittenDigits
         public const string TrainFile = "train.csv";
         public const string TestFile = "test.csv";
         public const string NetworkFile = "network.xml";
+        public const string GaTrainFile = "traindata.csv";
 
         [TestMethod]
         public void ShouldRun()
@@ -28,6 +29,24 @@ namespace AE.MachineLearning.Tests.HandWrittenDigits
                 sut.Run();
             }
           
+        }
+
+        [TestMethod]
+        [DeploymentItem(GaTrainFile)]
+        public void ShouldRunGeneticAlgorithm()
+        {
+            var trainFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TrainFile);
+            var outDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "outDir");
+
+            var testFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestFile); ;
+
+            using (var sut = new HandwrittenDigitRecogniser(GaTrainFile, testFile, outDir, .9, .2))
+            {
+                sut.RunGeneticAlgorithm();
+            }
+
+            throw new Exception("testhkjhk");
+
         }
 
 

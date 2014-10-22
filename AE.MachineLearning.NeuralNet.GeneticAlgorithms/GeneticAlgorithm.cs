@@ -32,9 +32,7 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
             _networkFactory = networkFactory;
             _networkFactory.NumberOfInputFeatures = numOfInputs;
             _networkFactory.NumberOfOutputs = numOfOutputs;
-            _sampler = new Sampler();
-            _sampler.NetworkFactory = networkFactory;
-
+            _sampler = new Sampler {NetworkFactory = networkFactory};
         }
 
         public StreamWriter LogWriter { get; set; }
@@ -44,7 +42,7 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
             if (LogWriter == null) return;
 
             LogWriter.WriteLine("{0} - {1}", DateTime.Now, message);
-            if (_flushCounter%10 == 0)
+            if (_flushCounter%1 == 0)
             {
                 LogWriter.Flush();
                 _flushCounter = 0;
@@ -60,28 +58,44 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 
             double optimumScore = 0.0;
             AbstractNetwork optimumNetwork = null;
-            for (int i = 0; i < samples.Length; i++)
+            foreach (AbstractNetwork network in samples)
             {
-                samples[i].InitNetworkWithRandomWeights();
-                _trainingAlgoritihm.Network = samples[i];
+                LogNetworkDetails(network);
+                network.InitNetworkWithRandomWeights();
+                _trainingAlgoritihm.Network = network;
 
-                _trainingAlgoritihm.Train(trainInputs, trainOutputs, .01, .7);
+                _trainingAlgoritihm.Train(trainInputs, trainOutputs, .2, .7,.8,100);
 
                 double[][] actualOutput = _trainingAlgoritihm.Predict(testInputs);
 
                 double score = _fitnessCalculator.Calculator(testOutputs, actualOutput);
+               
+                
 
                 if (score > optimumScore)
                 {
                     optimumScore = score;
-                    optimumNetwork = samples[i];
+                    optimumNetwork = network;
                 }
+
+               
+                WriteLog(string.Format("The score for network is {0}", score.ToString("F4")));
             }
 
             return optimumNetwork;
         }
 
-       
+       public void LogNetworkDetails(AbstractNetwork network)
+       {
+           WriteLog(string.Format("Network with {0} hidden layers", network.NumberOfHiddenLayers));
+
+           for (int index = 1; index < network.NetworkLayers.Length -1; index++)
+           {
+               var layer = network.NetworkLayers[index];
+               WriteLog(string.Format("Hidden Layer {0}, neurons {1}", index, layer.Neurons.Length));
+           }
+       }
+
         private void InitParams(double[][] inputs, double[][] outputs)
         {
             _numOfInputs = inputs[0].Length;
