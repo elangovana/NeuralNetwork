@@ -37,9 +37,9 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
                 new NeuralNetwork(3, 1, 1, new[] {5}, _mockActivation.Object)
             };
 
-            sut.Mutate(listNetworks, 1.0);
+           var result = sut.Mutate(listNetworks, 1.0);
 
-
+            Assert.AreEqual(listNetworks.Count, result.Length);
         }
     }
 }
