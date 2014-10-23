@@ -41,5 +41,7 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
 
             Assert.AreEqual(listNetworks.Count, result.Length);
         }
+
+      
     }
 }

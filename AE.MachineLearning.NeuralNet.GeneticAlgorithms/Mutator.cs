@@ -55,7 +55,7 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
                     else
                     {
                         hasChanged = true;
-                        NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] -= MutationSize;
+                        NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] += MutationSize;
                     }
                 }
 
@@ -64,7 +64,7 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
                     if (NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] - MutationSize > MinNodes)
                     {
                         hasChanged = true;
-                        NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] += MutationSize;
+                        NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] -= MutationSize;
                     }
                 }
                
