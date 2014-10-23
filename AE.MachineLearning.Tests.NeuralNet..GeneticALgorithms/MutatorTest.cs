@@ -12,6 +12,10 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
     {
         private Mock<INetworkFactory> _mockFactory;
         private Mock<IActivation> _mockActivation;
+        private const int MutationSize = 5;
+
+        private const int MaxNodes = 30;
+        private const int MinNodes = 10;
 
         [TestInitialize]
         public void TestInit()
@@ -27,7 +31,7 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
         [TestMethod]
         public void ShouldMutate()
         {
-            var sut = new Mutator(new FeedForwardLayerNeuralNetworkFactory());
+            var sut = new Mutator(new FeedForwardLayerNeuralNetworkFactory(),MinNodes,MaxNodes,MutationSize);
             var listNetworks = new List<AbstractNetwork>()
             {
                 new NeuralNetwork(3, 1, 1, new[] {5}, _mockActivation.Object)

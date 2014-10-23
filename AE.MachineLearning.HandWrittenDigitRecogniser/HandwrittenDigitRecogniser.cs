@@ -58,7 +58,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             Writelog("Procesing complete");
         }
 
-        public void RunGeneticAlgorithm(int minLayers, int maxLayers, int minNoOfNodes, int maxNoOfNodes, int numberOfGenerations, int populationSize, int iterationPerTraning, int maxIteration = 10000, double maxError = .05 )
+        public void RunGeneticAlgorithm(int minLayers, int maxLayers, int minNoOfNodes, int maxNoOfNodes, int numberOfGenerations, int populationSize, int iterationPerTraning, int mutationSize, int maxIteration = 10000, double maxError = .05 )
         {
             var data = new HandandWrittenDataLoader();
             data.LoadData(_trainFile, _testFile);
@@ -78,7 +78,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                                                   LogWriter = RunLogWriter
                                               },
                                           feedForwardLayerNeuralNetworkFactory, selector,
-                                          new Mutator(feedForwardLayerNeuralNetworkFactory))
+                                          new Mutator(feedForwardLayerNeuralNetworkFactory, minNoOfNodes, maxNoOfNodes, mutationSize))
                 {
                     MinNodes = minNoOfNodes,
                     MaxNodes = maxNoOfNodes,

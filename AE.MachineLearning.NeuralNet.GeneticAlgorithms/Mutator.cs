@@ -7,12 +7,18 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 {
     public class Mutator : IMutator
     {
-        public Mutator(INetworkFactory networkFactory)
+        public Mutator(INetworkFactory networkFactory, int minNodes, int maxNode, int mutationSize)
         {
             NetworkFactory = networkFactory;
+            MinNodes = minNodes;
+            MaxNode = maxNode;
+            MutationSize = mutationSize;
         }
 
         public INetworkFactory NetworkFactory { get; set; }
+        public int MinNodes { get; set; }
+        public int MaxNode { get; set; }
+        public int MutationSize { get; set; }
 
         public AbstractNetwork[] Mutate(List<AbstractNetwork> parentNetworks, double mutationRate)
         {
@@ -40,15 +46,33 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
                 NetworkFactory.NumberOfInputFeatures = parentNetworks[indexToMutate].NumberOfInputFeatures;
                 NetworkFactory.NumberOfOutputs = parentNetworks[indexToMutate].NumberOfOutputs;
                 NetworkFactory.NumberOfneuronsForHiddenLayers = parentNetworks[indexToMutate].NumberOfneuronsForHiddenLayers;
-                NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] = addOrDeleteNode == 0 || NetworkFactory
-                                                                                         .NumberOfneuronsForHiddenLayers
-                                                                                         [layerToChange] ==1
-                                                                                   ? NetworkFactory
-                                                                                         .NumberOfneuronsForHiddenLayers
-                                                                                         [layerToChange] + 1
-                                                                                   : NetworkFactory
-                                                                                         .NumberOfneuronsForHiddenLayers
-                                                                                         [layerToChange] - 1;
+
+                var hasChanged = false;
+                if (addOrDeleteNode == 0)
+                {
+                    if (NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] + MutationSize > MaxNode)
+                        addOrDeleteNode = 1;
+                    else
+                    {
+                        hasChanged = true;
+                        NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] -= MutationSize;
+                    }
+                }
+
+                if (addOrDeleteNode == 1)
+                {
+                    if (NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] - MutationSize > MinNodes)
+                    {
+                        hasChanged = true;
+                        NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] += MutationSize;
+                    }
+                }
+               
+                if (!hasChanged)
+                {
+                    NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] = rand.Next(MinNodes, MaxNode + 1);
+                }
+
                 mutantnetworks[i] = NetworkFactory.CreateNetwork();
             }
 

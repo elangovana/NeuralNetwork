@@ -1,5 +1,4 @@
-﻿using System;
-using AE.MachineLearning.NeuralNet.Core;
+﻿using AE.MachineLearning.NeuralNet.Core;
 using AE.MachineLearning.NeuralNet.GeneticAlgorithms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,9 +7,12 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
     [TestClass]
     public class GeneticAlgorithmTest
     {
+        private const int MutationSize = 5;
         private FeedForwardLayerNeuralNetworkFactory _feedForwardLayerNeuralNetworkFactory;
-        private RankBasedSelector _selector;
         private Mutator _mutator;
+        private RankBasedSelector _selector;
+        private const int MaxNodes = 30;
+        private const int MinNodes = 10;
 
         [TestInitialize]
         public void TestInit()
@@ -19,14 +21,14 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
             _feedForwardLayerNeuralNetworkFactory.Activation = new HyperTanActivation();
 
             _selector = new RankBasedSelector();
-            _mutator = new Mutator(_feedForwardLayerNeuralNetworkFactory);
+            _mutator = new Mutator(_feedForwardLayerNeuralNetworkFactory, MinNodes, MaxNodes, MutationSize);
         }
+
 
         [TestMethod]
         public void ShouldReturnOptimumNetwork()
         {
-
-             var trainInputs = new[]
+            var trainInputs = new[]
                 {
                     new[] {.889, -1, .85},
                     new[] {.77, -1.0, .99}
@@ -38,7 +40,7 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
                     new[] {.77, -1.0, .66}
                 };
 
-              var testInputs = new[]
+            var testInputs = new[]
                 {
                     new[] {.889, -1, .85},
                     new[] {.77, -1.0, .99}
@@ -56,14 +58,13 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
                                            _feedForwardLayerNeuralNetworkFactory, _selector, _mutator)
                 {
                     NumberOfGenerations = 2,
-                    SampleSize = 5
-
+                    SampleSize = 5,
+                    MinNodes = MinNodes,
+                    MaxNodes = MaxNodes
                 };
 
             //Act
-           var result=  sut.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
-
-           
+            AbstractNetwork result = sut.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
         }
     }
 }

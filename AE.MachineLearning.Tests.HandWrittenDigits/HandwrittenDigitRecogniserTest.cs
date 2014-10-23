@@ -42,7 +42,7 @@ namespace AE.MachineLearning.Tests.HandWrittenDigits
 
             using (var sut = new HandwrittenDigitRecogniser(GaTrainFile, testFile, outDir, .02, .7))
             {
-                sut.RunGeneticAlgorithm(1,10,50,101,10, 10, 1);
+                sut.RunGeneticAlgorithm(1,10,50,101,10, 10, 1,10);
             }
 
             throw new Exception("testhkjhk");
