@@ -91,8 +91,10 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
             int igen = 0;
             LogSettings();
             var scores = new double[samples.Length];
+            AbstractNetwork[] finalSamples;
             do
             {
+                finalSamples = samples;
                 WriteLog(string.Format("--------------------------- gen{0}", igen));
 
                 CalculateFitness(trainInputs, trainOutputs, testInputs, testOutputs, samples, scores);
@@ -110,7 +112,7 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
             } while (igen <= NumberOfGenerations);
 
 
-            return Selector.SelectFittestNetworks(samples, scores, 1).First();
+            return Selector.SelectFittestNetworks(finalSamples, scores, 1).First();
         }
 
         private void LogSettings()
