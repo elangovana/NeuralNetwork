@@ -10,6 +10,7 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
     {
         private FeedForwardLayerNeuralNetworkFactory _feedForwardLayerNeuralNetworkFactory;
         private RankBasedSelector _selector;
+        private Mutator _mutator;
 
         [TestInitialize]
         public void TestInit()
@@ -18,7 +19,9 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
             _feedForwardLayerNeuralNetworkFactory.Activation = new HyperTanActivation();
 
             _selector = new RankBasedSelector();
+            _mutator = new Mutator(_feedForwardLayerNeuralNetworkFactory);
         }
+
         [TestMethod]
         public void ShouldReturnOptimumNetwork()
         {
@@ -50,7 +53,12 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
             var sut = new GeneticAlgorithm(3, 3, 4, 10, new ClassficationFitnessCalculator(),
                                            new BackPropagationTraining(
                                                new EntropyLossGradientCalc(new HyperTanActivation())),
-                                           _feedForwardLayerNeuralNetworkFactory,_selector);
+                                           _feedForwardLayerNeuralNetworkFactory, _selector, _mutator)
+                {
+                    NumberOfGenerations = 2,
+                    SampleSize = 5
+
+                };
 
             //Act
            var result=  sut.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);

@@ -22,7 +22,7 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 
         public GeneticAlgorithm(int numOfInputs, int numOfOutputs, int minLayer, int maxlayers,
                                 IFitnessCalculator fitnessCalculator, ITrainingAlgoritihm trainingAlgoritihm,
-                                INetworkFactory networkFactory, ISelector selector)
+                                INetworkFactory networkFactory, ISelector selector, IMutator mutator)
         {
             _numOfInputs = numOfInputs;
             _numOfOutputs = numOfOutputs;
@@ -32,9 +32,11 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
             TrainingAlgoritihm = trainingAlgoritihm;
             NetworkFactory = networkFactory;
             Selector = selector;
+            Mutator = mutator;
             NetworkFactory.NumberOfInputFeatures = numOfInputs;
             NetworkFactory.NumberOfOutputs = numOfOutputs;
             _sampler = new Sampler {NetworkFactory = networkFactory};
+            IterationsPerSetting = 5;
         }
 
         public int MaxNodes
@@ -59,6 +61,8 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 
         public int MinLayer { get; set; }
 
+        public int IterationsPerSetting { get; set; }
+
         public INetworkFactory NetworkFactory { get; set; }
 
       
@@ -66,6 +70,7 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
         public ITrainingAlgoritihm TrainingAlgoritihm { get; set; }
 
         public ISelector Selector { get; set; }
+        public IMutator Mutator { get; set; }
         public StreamWriter LogWriter { get; set; }
 
         public int NumberOfGenerations
@@ -91,11 +96,16 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
                 WriteLog(string.Format("--------------------------- gen{0}", igen));
 
                 CalculateFitness(trainInputs, trainOutputs, testInputs, testOutputs, samples, scores);
-                int n = samples.Length/2;
-                IEnumerable<AbstractNetwork> fittestSamples = Selector.SelectFittestNetworks(samples, scores, n);
+                int fittestN = samples.Length/2;
+                var fittestSamples = Selector.SelectFittestNetworks(samples, scores, fittestN).ToList();
+
+                var mutants = Mutator.Mutate(fittestSamples, .8);
+
+                var mutantN = mutants.Length;
                 AbstractNetwork[] newSamples = _sampler.SampleNetworkPopulation(MinLayer, Maxlayers, _minNodes,
-                                                                               _maxNodes, samples.Length - n);
-                samples = MergeSamples(fittestSamples, newSamples);
+                                                                               _maxNodes, samples.Length  - fittestN - mutantN);
+                samples = MergeSamples(fittestSamples, mutants);
+                samples = MergeSamples(samples, newSamples);
                 igen++;
             } while (igen <= NumberOfGenerations);
 
@@ -149,14 +159,20 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
             {
                 AbstractNetwork network = samples[s];
                 LogNetworkDetails(network);
-                network.InitNetworkWithRandomWeights();
-                TrainingAlgoritihm.Network = network;
 
-                TrainingAlgoritihm.Train(trainInputs, trainOutputs);
+                double score = 0.0;
+                for (int i = 0; i < IterationsPerSetting; i++)
+                {
+                    network.InitNetworkWithRandomWeights();
+                    TrainingAlgoritihm.Network = network;
 
-                double[][] actualOutput = TrainingAlgoritihm.Predict(testInputs);
+                    TrainingAlgoritihm.Train(trainInputs, trainOutputs);
 
-                double score = _fitnessCalculator.Calculator(testOutputs, actualOutput);
+                    double[][] actualOutput = TrainingAlgoritihm.Predict(testInputs);
+
+                    score += _fitnessCalculator.Calculator(testOutputs, actualOutput);
+                }
+                score = score/IterationsPerSetting;
 
                 scores[s] = score;
 

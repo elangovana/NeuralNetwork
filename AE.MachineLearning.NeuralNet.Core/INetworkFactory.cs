@@ -7,7 +7,7 @@
         int NumberOfOutputs { get; set; }
         int NumberOfHiddenLayers { get; set; }
         int[] NumberOfneuronsForHiddenLayers { get; set; }
-        NetworkLayer OutputLayer { get; set; }
+        NetworkLayer OutputLayer { get; }
         IActivation ActivationOutput { get; set; }
 
         AbstractNetwork CreateNetwork();
