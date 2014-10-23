@@ -7,34 +7,55 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 {
     public interface IMutator
     {
-        List<AbstractNetwork> Mutate(List<AbstractNetwork> networks, double mutationRate);
+        AbstractNetwork[] Mutate(List<AbstractNetwork> parentNetworks, double mutationRate);
     }
 
     public class Mutator : IMutator
     {
-        public List<AbstractNetwork> Mutate(List<AbstractNetwork> networks, double mutationRate)
+        public Mutator(INetworkFactory networkFactory)
         {
-            var noOfMutants = (int) Math.Ceiling(networks.Count*mutationRate);
+            NetworkFactory = networkFactory;
+        }
+
+        public INetworkFactory NetworkFactory { get; set; }
+
+        public AbstractNetwork[] Mutate(List<AbstractNetwork> parentNetworks, double mutationRate)
+        {
+            var noOfMutants = (int) Math.Ceiling(parentNetworks.Count*mutationRate);
 
             var mutatantIndices = new List<int>();
             var rand = new Random();
+            var mutantnetworks = new AbstractNetwork[noOfMutants];
             for (int i = 0; i < noOfMutants; i++)
             {
                 int indexToMutate;
                 do
                 {
-                    indexToMutate = rand.Next(0, networks.Count - 1);
+                    indexToMutate = rand.Next(0, parentNetworks.Count);
                 } while (mutatantIndices.Any(x => x == indexToMutate));
 
                 mutatantIndices.Add(indexToMutate);
 
-                var addOrDeleteNode = rand.Next(0, 1);
-                var layerToChange = rand.Next(1, networks[indexToMutate].NetworkLayers.Length - 2);
+                var addOrDeleteNode = rand.Next(0, 2);
+                var layerToChange = rand.Next(1, parentNetworks[indexToMutate].NetworkLayers.Length - 1);
 
-               
+                NetworkFactory.Activation = parentNetworks[indexToMutate].Activation;
+                NetworkFactory.ActivationOutput = parentNetworks[indexToMutate].ActivationOutput;
+                NetworkFactory.NumberOfHiddenLayers = parentNetworks[indexToMutate].NumberOfHiddenLayers;
+                NetworkFactory.NumberOfInputFeatures = parentNetworks[indexToMutate].NumberOfInputFeatures;
+                NetworkFactory.NumberOfOutputs = parentNetworks[indexToMutate].NumberOfOutputs;
+                NetworkFactory.NumberOfneuronsForHiddenLayers = parentNetworks[indexToMutate].NumberOfneuronsForHiddenLayers;
+                NetworkFactory.NumberOfneuronsForHiddenLayers[layerToChange] = addOrDeleteNode == 0
+                                                                                   ? NetworkFactory
+                                                                                         .NumberOfneuronsForHiddenLayers
+                                                                                         [layerToChange] + 1
+                                                                                   : NetworkFactory
+                                                                                         .NumberOfneuronsForHiddenLayers
+                                                                                         [layerToChange] - 1;
+                mutantnetworks[i] = NetworkFactory.CreateNetwork();
             }
 
-            throw new NotImplementedException();
+            return mutantnetworks;
         }
     }
 }

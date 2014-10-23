@@ -7,7 +7,7 @@
         public int NumberOfOutputs { get; set; }
         public int NumberOfHiddenLayers { get; set; }
         public int[] NumberOfneuronsForHiddenLayers { get; set; }
-        public NetworkLayer OutputLayer { get; set; }
+        public NetworkLayer OutputLayer { get; private set; }
         public IActivation ActivationOutput { get; set; }
 
         public AbstractNetwork CreateNetwork()
