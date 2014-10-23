@@ -58,20 +58,35 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             Writelog("Procesing complete");
         }
 
-        public void RunGeneticAlgorithm()
+        public void RunGeneticAlgorithm(int minLayers, int maxLayers, int minNoOfNodes, int maxNoOfNodes, int numberOfGenerations, int populationSize, int maxIteration = 10000, double maxError = .05)
         {
             var data = new HandandWrittenDataLoader();
             data.LoadData(_trainFile, _testFile);
 
             var feedForwardLayerNeuralNetworkFactory = new FeedForwardLayerNeuralNetworkFactory();
             feedForwardLayerNeuralNetworkFactory.Activation = new HyperTanActivation();
-            var ga = new GeneticAlgorithm(data.Inputs[0].Length, data.Outputs[0].Length, 1, 10,
+            var selector = new RankBasedSelector();
+            var ga = new GeneticAlgorithm(data.Inputs[0].Length, data.Outputs[0].Length, minLayers, maxLayers,
                                           new ClassficationFitnessCalculator(),
                                           new BackPropagationTraining(
-                                              new EntropyLossGradientCalc(new HyperTanActivation())),
-                                          feedForwardLayerNeuralNetworkFactory);
+                                              new EntropyLossGradientCalc(new HyperTanActivation()))
+                                              {
+                                                  MaxError = maxError,
+                                                  LearningRate = _learningRate,
+                                                  Momentum = _momentum,
+                                                  MaxIteration = maxIteration,
+                                                  LogWriter = RunLogWriter
+                                              },
+                                          feedForwardLayerNeuralNetworkFactory, selector)
+                {
+                    MinNodes = minNoOfNodes,
+                    MaxNodes = maxNoOfNodes,
+                    NumberOfGenerations = numberOfGenerations,
+                    SampleSize = populationSize
 
-            RunGa(ga,data.Inputs,data.Outputs);
+                };
+            
+            RunGa(ga, data.Inputs, data.Outputs);
         }
 
         public void RunGa(IGeneticAlgorithm ga, double[][] inputs, double[][] outputs)
@@ -97,9 +112,8 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                 testOutputs[j] = outputs[i];
             }
             ga.LogWriter = RunLogWriter;
-            ga.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
-
-            
+            var network = ga.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
+            network.PersistNetwork(System.IO.Path.Combine(_outDir, "GeFinalNetwork.xml"));
         }
 
 
@@ -130,11 +144,15 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             var trainingAlgorithm = new BackPropagationTraining(netWork,
                                                                 new EntropyLossGradientCalc(new HyperTanActivation()))
                 {
-                    LogWriter = RunLogWriter
+                    LogWriter = RunLogWriter,
+                    LearningRate = _learningRate,
+                    Momentum = _momentum, 
+                    MaxError = maxError, 
+                    MaxIteration = maxIteration
                 };
 
-            trainingAlgorithm.Train(data.Inputs, data.Outputs,
-                                    _learningRate, _momentum, maxError, maxIteration);
+            trainingAlgorithm.Train(data.Inputs, data.Outputs
+                                    );
 
             netWork.PersistNetwork(Path.Combine(_outDir, "NetworkFinal.xml"));
             return trainingAlgorithm;

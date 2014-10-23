@@ -17,6 +17,11 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         public abstract NetworkLayer[] NetworkLayers { get; }
 
+        public abstract void AddNeuron(int layerIndex);
+
+        public abstract void DeleteNeuron(int layerIndex);
+
+
         /// <summary>
         ///     Sets the weights for a given layer
         /// </summary>

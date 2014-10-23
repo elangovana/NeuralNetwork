@@ -7,6 +7,9 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
     {
         StreamWriter LogWriter { get; set; }
 
+        int NumberOfGenerations { get; set; }
+        
+
         AbstractNetwork Optimise(double[][] trainInputs, double[][] trainOutputs, double[][] testInputs,
                                  double[][] testOutputs);
     }

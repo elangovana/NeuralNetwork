@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AE.MachineLearning.NeuralNet.Core;
 
 namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
@@ -8,34 +10,124 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
     {
         private readonly IFitnessCalculator _fitnessCalculator;
 
-        private readonly int _maxlayers;
-        private readonly int _minLayer;
-        private readonly INetworkFactory _networkFactory;
-        private readonly ITrainingAlgoritihm _trainingAlgoritihm;
         private int _flushCounter;
+        private int _maxNodes = 120;
+        private int _minNodes = 1;
         private int _numOfInputs;
 
         private int _numOfOutputs;
-        private int _sampleSize = 10;
-        private readonly Sampler _sampler;
+        private int _numberOfGenerations = 10;
+        private int _sampleSize = 10000;
+        private Sampler _sampler;
 
         public GeneticAlgorithm(int numOfInputs, int numOfOutputs, int minLayer, int maxlayers,
                                 IFitnessCalculator fitnessCalculator, ITrainingAlgoritihm trainingAlgoritihm,
-                                INetworkFactory networkFactory)
+                                INetworkFactory networkFactory, ISelector selector)
         {
             _numOfInputs = numOfInputs;
             _numOfOutputs = numOfOutputs;
-            _minLayer = minLayer;
-            _maxlayers = maxlayers;
+            MinLayer = minLayer;
+            Maxlayers = maxlayers;
             _fitnessCalculator = fitnessCalculator;
-            _trainingAlgoritihm = trainingAlgoritihm;
-            _networkFactory = networkFactory;
-            _networkFactory.NumberOfInputFeatures = numOfInputs;
-            _networkFactory.NumberOfOutputs = numOfOutputs;
+            TrainingAlgoritihm = trainingAlgoritihm;
+            NetworkFactory = networkFactory;
+            Selector = selector;
+            NetworkFactory.NumberOfInputFeatures = numOfInputs;
+            NetworkFactory.NumberOfOutputs = numOfOutputs;
             _sampler = new Sampler {NetworkFactory = networkFactory};
         }
 
+        public int MaxNodes
+        {
+            get { return _maxNodes; }
+            set { _maxNodes = value; }
+        }
+
+        public int MinNodes
+        {
+            get { return _minNodes; }
+            set { _minNodes = value; }
+        }
+
+        public int SampleSize
+        {
+            get { return _sampleSize; }
+            set { _sampleSize = value; }
+        }
+
+        public int Maxlayers { get; set; }
+
+        public int MinLayer { get; set; }
+
+        public INetworkFactory NetworkFactory { get; set; }
+
+      
+
+        public ITrainingAlgoritihm TrainingAlgoritihm { get; set; }
+
+        public ISelector Selector { get; set; }
         public StreamWriter LogWriter { get; set; }
+
+        public int NumberOfGenerations
+        {
+            get { return _numberOfGenerations; }
+            set { _numberOfGenerations = value; }
+        }
+
+        public AbstractNetwork Optimise(double[][] trainInputs, double[][] trainOutputs, double[][] testInputs,
+                                        double[][] testOutputs)
+        {
+            InitParams(trainInputs, trainOutputs);
+
+            AbstractNetwork[] samples = _sampler.SampleNetworkPopulation(MinLayer, Maxlayers, _minNodes, _maxNodes,
+                                                                        SampleSize);
+
+
+            int igen = 0;
+            LogSettings();
+            var scores = new double[samples.Length];
+            do
+            {
+                WriteLog(string.Format("--------------------------- gen{0}", igen));
+
+                CalculateFitness(trainInputs, trainOutputs, testInputs, testOutputs, samples, scores);
+                int n = samples.Length/2;
+                IEnumerable<AbstractNetwork> fittestSamples = Selector.SelectFittestNetworks(samples, scores, n);
+                AbstractNetwork[] newSamples = _sampler.SampleNetworkPopulation(MinLayer, Maxlayers, _minNodes,
+                                                                               _maxNodes, samples.Length - n);
+                samples = MergeSamples(fittestSamples, newSamples);
+                igen++;
+            } while (igen <= NumberOfGenerations);
+
+
+            return Selector.SelectFittestNetworks(samples, scores, 1).First();
+        }
+
+        private void LogSettings()
+        {
+            WriteLog(string.Format("Population Size {0}, Max Generations {1}, Min Layer {2}, Max Layer {3}, Min Nodes {4}, Max Nodes {5}", SampleSize, NumberOfGenerations, MinLayer, Maxlayers, MinNodes, MaxNodes));
+        }
+
+        private AbstractNetwork[] MergeSamples(IEnumerable<AbstractNetwork> fittestSamples, AbstractNetwork[] newSamples)
+        {
+            IEnumerable<AbstractNetwork> abstractNetworks = fittestSamples as AbstractNetwork[] ??
+                                                            fittestSamples.ToArray();
+            var networks = new AbstractNetwork[abstractNetworks.Count() + newSamples.Length];
+            int i = 0;
+            foreach (AbstractNetwork abstractNetwork in abstractNetworks)
+            {
+                networks[i] = abstractNetwork;
+                i++;
+            }
+
+            foreach (AbstractNetwork abstractNetwork in newSamples)
+            {
+                networks[i] = abstractNetwork;
+                i++;
+            }
+
+            return networks;
+        }
 
         private void WriteLog(string message)
         {
@@ -50,51 +142,55 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
             _flushCounter++;
         }
 
-        public AbstractNetwork Optimise(double[][] trainInputs, double[][] trainOutputs, double[][] testInputs,
-                                        double[][] testOutputs)
+        private void CalculateFitness(double[][] trainInputs, double[][] trainOutputs, double[][] testInputs,
+                                      double[][] testOutputs, AbstractNetwork[] samples, double[] scores)
         {
-            InitParams(trainInputs, trainOutputs);
-            AbstractNetwork[] samples = _sampler.SampleNetworkPopulation(_minLayer, _maxlayers, 1, 100, _sampleSize);
-
-            double optimumScore = 0.0;
-            AbstractNetwork optimumNetwork = null;
-            foreach (AbstractNetwork network in samples)
+            for (int s = 0; s < samples.Length; s++)
             {
+                AbstractNetwork network = samples[s];
                 LogNetworkDetails(network);
                 network.InitNetworkWithRandomWeights();
-                _trainingAlgoritihm.Network = network;
+                TrainingAlgoritihm.Network = network;
 
-                _trainingAlgoritihm.Train(trainInputs, trainOutputs, .2, .7,.8,100);
+                TrainingAlgoritihm.Train(trainInputs, trainOutputs);
 
-                double[][] actualOutput = _trainingAlgoritihm.Predict(testInputs);
+                double[][] actualOutput = TrainingAlgoritihm.Predict(testInputs);
 
                 double score = _fitnessCalculator.Calculator(testOutputs, actualOutput);
-               
-                
 
-                if (score > optimumScore)
-                {
-                    optimumScore = score;
-                    optimumNetwork = network;
-                }
+                scores[s] = score;
 
-               
-                WriteLog(string.Format("The score for network is {0}", score.ToString("F4")));
+
+                WriteLog(
+                    string.Format(
+                        "The score for network with {0} hidden layers, with avg no nuerons {1} is {2}",
+                        network.NumberOfHiddenLayers, GetAverageNeuronsPerLayer(network).ToString("F4"),
+                        score.ToString("F4")));
             }
-
-            return optimumNetwork;
         }
 
-       public void LogNetworkDetails(AbstractNetwork network)
-       {
-           WriteLog(string.Format("Network with {0} hidden layers", network.NumberOfHiddenLayers));
+        private void LogNetworkDetails(AbstractNetwork network)
+        {
+            WriteLog(string.Format("Network with {0} hidden layers", network.NumberOfHiddenLayers));
 
-           for (int index = 1; index < network.NetworkLayers.Length -1; index++)
-           {
-               var layer = network.NetworkLayers[index];
-               WriteLog(string.Format("Hidden Layer {0}, neurons {1}", index, layer.Neurons.Length));
-           }
-       }
+            for (int index = 1; index < network.NetworkLayers.Length - 1; index++)
+            {
+                NetworkLayer layer = network.NetworkLayers[index];
+                WriteLog(string.Format("Hidden Layer {0}, neurons {1}", index, layer.Neurons.Length));
+            }
+        }
+
+        private double GetAverageNeuronsPerLayer(AbstractNetwork network)
+        {
+            int total = 0;
+            for (int i = 1; i < network.NetworkLayers.Length - 1; i++)
+            {
+                total += network.NetworkLayers[i].NumOfNeurons;
+            }
+
+            return ((double) total/network.NumberOfHiddenLayers);
+        }
+
 
         private void InitParams(double[][] inputs, double[][] outputs)
         {

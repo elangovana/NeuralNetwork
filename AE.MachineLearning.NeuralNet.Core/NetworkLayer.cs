@@ -88,6 +88,7 @@ namespace AE.MachineLearning.NeuralNet.Core
         }
 
 
+
         /// <summary>
         ///     Sets the weights and bias for each neuron
         /// </summary>

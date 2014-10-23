@@ -40,9 +40,9 @@ namespace AE.MachineLearning.Tests.HandWrittenDigits
 
             var testFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestFile); ;
 
-            using (var sut = new HandwrittenDigitRecogniser(GaTrainFile, testFile, outDir, .9, .2))
+            using (var sut = new HandwrittenDigitRecogniser(GaTrainFile, testFile, outDir, .2, .5))
             {
-                sut.RunGeneticAlgorithm();
+                sut.RunGeneticAlgorithm(1,3,1,120,10, 10);
             }
 
             throw new Exception("testhkjhk");

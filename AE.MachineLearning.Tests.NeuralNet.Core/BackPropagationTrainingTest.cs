@@ -7,9 +7,9 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
     [TestClass]
     public class BackPropagationTrainingTest
     {
+        private GradientSquaredLossCalculator _gradientSquaredLossCalculator;
         private NeuralNetwork _network;
         private int _oIndex;
-        private GradientSquaredLossCalculator _gradientSquaredLossCalculator;
 
         [TestInitialize]
         public void TestInit()
@@ -37,8 +37,16 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
         public void ShouldTrainWithNoMomentum()
         {
             //Arrange
-           
-            var sut = new BackPropagationTraining(_network, _gradientSquaredLossCalculator);
+
+            var sut = new BackPropagationTraining(_network, _gradientSquaredLossCalculator)
+                {
+                    LearningRate = .90,
+                    Momentum = .0,
+                    MaxError = 0.0,
+                    MaxIteration = 1
+                };
+
+
             var inputs = new double[2][];
             for (int index = 0; index < inputs.Length; index++)
             {
@@ -53,7 +61,7 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
             }
 
             //Act
-            sut.Train(inputs, outputs, .90, 0.0,0.0,1);
+            sut.Train(inputs, outputs);
 
             //Assert
             Assert.AreEqual(-.8932, Math.Round(_network.NetworkLayers[_oIndex].Neurons[0].Output, 4));
@@ -65,22 +73,28 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
         public void ShouldTrainWithMometum()
         {
             //Arrange
-            var sut = new BackPropagationTraining(_network, _gradientSquaredLossCalculator);
+            var sut = new BackPropagationTraining(_network, _gradientSquaredLossCalculator)
+                {
+                    LearningRate = .90,
+                    Momentum = 0.2,
+                    MaxError = 0.0000,
+                    MaxIteration = 5
+                };
             var inputs = new double[1][];
             for (int index = 0; index < inputs.Length; index++)
             {
-                inputs[index] = new[] { 1.0, 2.0, 3.0 };
+                inputs[index] = new[] {1.0, 2.0, 3.0};
             }
 
 
             var outputs = new double[1][];
             for (int i = 0; i < outputs.Length; i++)
             {
-                outputs[i] = new[] { -.85, .7500 };
+                outputs[i] = new[] {-.85, .7500};
             }
 
             //Act
-            sut.Train(inputs, outputs, .90, 0.2,0.0000,5);
+            sut.Train(inputs, outputs);
 
             //Assert
             Assert.AreEqual(-.8859, Math.Round(_network.NetworkLayers[_oIndex].Neurons[0].Output, 4));

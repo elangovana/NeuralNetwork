@@ -85,6 +85,16 @@ namespace AE.MachineLearning.NeuralNet.Core
             get { return _networkLayers ?? (_networkLayers = ConstructNetwork()); }
         }
 
+        public override void AddNeuron(int layerIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void DeleteNeuron(int layerIndex)
+        {
+            throw new NotImplementedException();
+        }
+
         public override IActivation ActivationOutput
         {
             get { return _activationOutput ?? Activation; }

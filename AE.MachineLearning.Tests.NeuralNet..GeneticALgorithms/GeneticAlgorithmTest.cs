@@ -1,4 +1,5 @@
-﻿using AE.MachineLearning.NeuralNet.Core;
+﻿using System;
+using AE.MachineLearning.NeuralNet.Core;
 using AE.MachineLearning.NeuralNet.GeneticAlgorithms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,14 +9,15 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
     public class GeneticAlgorithmTest
     {
         private FeedForwardLayerNeuralNetworkFactory _feedForwardLayerNeuralNetworkFactory;
+        private RankBasedSelector _selector;
 
         [TestInitialize]
         public void TestInit()
         {
             _feedForwardLayerNeuralNetworkFactory = new FeedForwardLayerNeuralNetworkFactory();
             _feedForwardLayerNeuralNetworkFactory.Activation = new HyperTanActivation();
-       
-    
+
+            _selector = new RankBasedSelector();
         }
         [TestMethod]
         public void ShouldReturnOptimumNetwork()
@@ -48,10 +50,12 @@ namespace AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms
             var sut = new GeneticAlgorithm(3, 3, 4, 10, new ClassficationFitnessCalculator(),
                                            new BackPropagationTraining(
                                                new EntropyLossGradientCalc(new HyperTanActivation())),
-                                           _feedForwardLayerNeuralNetworkFactory);
+                                           _feedForwardLayerNeuralNetworkFactory,_selector);
 
             //Act
-            sut.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
+           var result=  sut.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
+
+           
         }
     }
 }
