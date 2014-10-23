@@ -46,6 +46,7 @@
     <Compile Include="IMutator.cs" />
     <Compile Include="ISampleGenerator.cs" />
     <Compile Include="ISelector.cs" />
+    <Compile Include="Mutator.cs" />
     <Compile Include="RankBasedSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sampler.cs" />

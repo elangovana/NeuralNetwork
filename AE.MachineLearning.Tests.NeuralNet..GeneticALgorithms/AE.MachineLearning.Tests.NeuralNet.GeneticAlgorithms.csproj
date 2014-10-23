@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -56,6 +59,7 @@
     <Compile Include="ClassificationFitnessTest.cs" />
     <Compile Include="GeneticAlgorithmTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MutatorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AE.MachineLearning.NeuralNet.Core\AE.MachineLearning.NeuralNet.Core.csproj">
@@ -66,6 +70,9 @@
       <Project>{445b538c-b106-4631-8ac6-84e32c3688a7}</Project>
       <Name>AE.MachineLearning.NeuralNet.GeneticAlgorithms</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
