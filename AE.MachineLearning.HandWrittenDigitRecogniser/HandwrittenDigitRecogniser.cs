@@ -52,20 +52,29 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             //Write Network init
             int i = 1;
             double correctRate = 0.0;
-            double previousCorrectRate;
+     
+            var maxScore = 0.0;
+            var maxScoreNetwork = "";
             do
             {
-                previousCorrectRate = correctRate;
+              
                 string fileName = string.Format("Networkfinal{0}.xml", i);
-                BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, maxIteration, maxError,
+                BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, 1, maxError,
                                                                             fileName);
 
                 i++;
                 correctRate = Predict(data, trainingAlgoritihmAlgorithm);
-            } while (previousCorrectRate < correctRate);
+                if (correctRate > maxScore)
+                {
+                    maxScore = correctRate;
+                    maxScoreNetwork = fileName;
+                }
+            } while (correctRate < 90 && i < maxIteration);
 
 
             Writelog("Procesing complete");
+            Writelog(string.Format( "Max score {0}, in netwokr {1}" , maxScore, maxScoreNetwork));
+           
         }
 
         public void RunGeneticAlgorithm(int minLayers, int maxLayers, int minNoOfNodes, int maxNoOfNodes,
@@ -166,7 +175,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                     Momentum = _momentum,
                     MaxError = maxError,
                     MaxIteration = maxIteration,
-                    LogLevel = 0
+                    LogLevel = 3
                 };
 
             double[][] randomisedInputs = null;
