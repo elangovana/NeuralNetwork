@@ -50,15 +50,15 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
 
             //Write Network init
-            var i = 1;
+            int i = 1;
             double correctRate = 0.0;
             double previousCorrectRate;
             do
             {
-
                 previousCorrectRate = correctRate;
-                var fileName = string.Format("Networkfinal{0}.xml", i);
-                BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, maxIteration, maxError, fileName);
+                string fileName = string.Format("Networkfinal{0}.xml", i);
+                BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, maxIteration, maxError,
+                                                                            fileName);
 
                 i++;
                 correctRate = Predict(data, trainingAlgoritihmAlgorithm);
@@ -169,8 +169,10 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                     LogLevel = 0
                 };
 
-            trainingAlgorithm.Train(data.Inputs, data.Outputs
-                );
+            double[][] randomisedInputs = null;
+            double[][] randomisedOutputs = null;
+            data.Randomise(data.Inputs, data.Outputs, out randomisedInputs, out randomisedOutputs);
+            trainingAlgorithm.Train(randomisedInputs, randomisedOutputs);
 
             netWork.PersistNetwork(Path.Combine(_outDir, fileNameToPersistNetwork));
             return trainingAlgorithm;

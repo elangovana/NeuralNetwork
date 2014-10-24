@@ -15,7 +15,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
         public double[][] Outputs { get; private set; }
 
-        int[] TestOutputs { get;  set; }
+        private int[] TestOutputs { get; set; }
 
         public void LoadData(string trainFile, string testFile)
         {
@@ -23,7 +23,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             //Set IO for train
             double[][] inputs;
             double[][] outputs;
-            EncodeOutput(dataEntries, out inputs,  out outputs);
+            EncodeOutput(dataEntries, out inputs, out outputs);
 
             Inputs = inputs;
             Outputs = outputs;
@@ -38,17 +38,16 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
             int totalCorrect = outputs.Where((t, r) => TestOutputs[r] == GetDigit(t)).Count();
 
-            percentageRate = (totalCorrect/(double)outputs.Length)*100.0;
+            percentageRate = (totalCorrect/(double) outputs.Length)*100.0;
             return true;
         }
 
         private void ProcessTestInputs(string testFile, int inputLength)
         {
-       
-            var testInputs = ParseFile(testFile);
+            List<double[]> testInputs = ParseFile(testFile);
 
             TestInputs = testInputs.ToArray();
-            if (TestInputs[0].Length == inputLength ) return;
+            if (TestInputs[0].Length == inputLength) return;
 
             //The test data doenst contain any outputs
 
@@ -62,7 +61,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
             double[][] parsedInput;
             double[][] parsedOutput;
-            EncodeOutput(testInputs, out  parsedInput, out  parsedOutput);
+            EncodeOutput(testInputs, out parsedInput, out parsedOutput);
 
             TestInputs = parsedInput;
         }
@@ -99,14 +98,14 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
                 for (int i = 0; i < input.Length; i++)
                 {
-                    var digit = GetDigit(outputs[i]);
+                    int digit = GetDigit(outputs[i]);
 
                     writer.WriteLine("{0},{1}", digit, input[i]);
                 }
             }
         }
 
-        private static int GetDigit(double[]outputs)
+        private static int GetDigit(double[] outputs)
         {
             double maxProb = outputs.Max(x => x);
 
@@ -144,6 +143,28 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             }
 
             return data;
+        }
+
+        public void Randomise( double[][] inputs,  double[][]outputs, out double[][]  randomisedInputs, out double[][]  randomisedOutputs)
+        {
+            var random = new Random();
+            var randomOrder = new double[inputs.Length];
+            int randomLimit = inputs.Length * 2;
+            for (int i = 0; i < randomOrder.Length; i++)
+            {
+                randomOrder[i] = random.Next(0, randomLimit);
+            }
+
+            var randomised = inputs.Select((r, i) => new {input = r, output = outputs[i], order = randomOrder[i]})
+                                   .OrderBy(x => x.order).ToArray();
+
+            randomisedInputs = new double[inputs.Length][];
+            randomisedOutputs = new double[outputs.Length][];
+            for (int i = 0; i < randomised.Count(); i++)
+            {
+                randomisedInputs[i] = randomised[i].input;
+                randomisedOutputs[i] = randomised[i].output;
+            }
         }
     }
 }
