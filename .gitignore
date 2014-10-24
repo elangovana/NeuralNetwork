@@ -154,3 +154,12 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+ R data files from past sessions
+.DS_Store
+Documentation/[rR]eport/reportlatex/*.aux
+Documentation/[rR]eport/reportlatex/*.log
+Documentation/[rR]eport/reportlatex/Report.pdf
+Documentation/[rR]eport/reportlatex/*.synctex.gz
+Documentation/[rR]eport/reportlatex/*.toc
+Documentation/[rR]eport/reportlatex/*.bbl
+Documentation/[rR]eport/reportlatex/*.blg
