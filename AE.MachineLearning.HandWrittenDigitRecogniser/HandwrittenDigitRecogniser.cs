@@ -21,7 +21,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
         {
             _trainFile = trainFile;
             _testFile = testFile;
-            _outDir = Path.Combine(outDir, string.Format("Run{0}", DateTime.Now.ToString("yyyyMMddmmhhss")));
+            _outDir = Path.Combine(outDir, string.Format("Run{0}", DateTime.Now.ToString("yyyyMMddhhmmss")));
             Helper.SetUpDir(_outDir);
             _networkFile = networkFile;
             _learningRate = learningRate;
@@ -50,15 +50,27 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
 
             //Write Network init
-            BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, maxIteration, maxError);
+            var i = 1;
+            double correctRate = 0.0;
+            double previousCorrectRate;
+            do
+            {
 
-            Predict(data, trainingAlgoritihmAlgorithm);
+                previousCorrectRate = correctRate;
+                var fileName = string.Format("Networkfinal{0}.xml", i);
+                BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, maxIteration, maxError, fileName);
+
+                i++;
+                correctRate = Predict(data, trainingAlgoritihmAlgorithm);
+            } while (previousCorrectRate < correctRate);
 
 
             Writelog("Procesing complete");
         }
 
-        public void RunGeneticAlgorithm(int minLayers, int maxLayers, int minNoOfNodes, int maxNoOfNodes, int numberOfGenerations, int populationSize, int iterationPerTraning, int mutationSize, int maxIteration = 10000, double maxError = .05 )
+        public void RunGeneticAlgorithm(int minLayers, int maxLayers, int minNoOfNodes, int maxNoOfNodes,
+                                        int numberOfGenerations, int populationSize, int iterationPerTraning,
+                                        int mutationSize, int maxIteration = 10000, double maxError = .05)
         {
             var data = new HandandWrittenDataLoader();
             data.LoadData(_trainFile, _testFile);
@@ -75,19 +87,20 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                                                   LearningRate = _learningRate,
                                                   Momentum = _momentum,
                                                   MaxIteration = maxIteration,
-                                                  LogWriter = RunLogWriter
+                                                  LogWriter = RunLogWriter,
+                                                  LogLevel = 3
                                               },
                                           feedForwardLayerNeuralNetworkFactory, selector,
-                                          new Mutator(feedForwardLayerNeuralNetworkFactory, minNoOfNodes, maxNoOfNodes, mutationSize))
+                                          new Mutator(feedForwardLayerNeuralNetworkFactory, minNoOfNodes, maxNoOfNodes,
+                                                      mutationSize))
                 {
                     MinNodes = minNoOfNodes,
                     MaxNodes = maxNoOfNodes,
                     NumberOfGenerations = numberOfGenerations,
                     SampleSize = populationSize,
                     IterationsPerSetting = iterationPerTraning
-
                 };
-            
+
             RunGa(ga, data.Inputs, data.Outputs);
         }
 
@@ -114,12 +127,12 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                 testOutputs[j] = outputs[i];
             }
             ga.LogWriter = RunLogWriter;
-            var network = ga.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
-            network.PersistNetwork(System.IO.Path.Combine(_outDir, "GeFinalNetwork.xml"));
+            AbstractNetwork network = ga.Optimise(trainInputs, trainOutputs, testInputs, testOutputs);
+            network.PersistNetwork(Path.Combine(_outDir, "GeFinalNetwork.xml"));
         }
 
 
-        private void Predict(HandandWrittenDataLoader data, BackPropagationTraining trainingAlgoritihmAlgorithm)
+        private double Predict(HandandWrittenDataLoader data, BackPropagationTraining trainingAlgoritihmAlgorithm)
         {
             Writelog(string.Format("Running prediction with test records rows {0} columns {1}", data.TestInputs.Length,
                                    data.TestInputs[0].Length));
@@ -132,10 +145,12 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             {
                 Writelog(string.Format("Percentage correct prediction {0}", percentageCorrect.ToString("F4")));
             }
+
+            return percentageCorrect;
         }
 
         private BackPropagationTraining Train(HandandWrittenDataLoader data, AbstractNetwork netWork, int maxIteration,
-                                              double maxError)
+                                              double maxError, string fileNameToPersistNetwork)
         {
             Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
             Writelog(
@@ -148,15 +163,16 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                 {
                     LogWriter = RunLogWriter,
                     LearningRate = _learningRate,
-                    Momentum = _momentum, 
-                    MaxError = maxError, 
-                    MaxIteration = maxIteration
+                    Momentum = _momentum,
+                    MaxError = maxError,
+                    MaxIteration = maxIteration,
+                    LogLevel = 0
                 };
 
             trainingAlgorithm.Train(data.Inputs, data.Outputs
-                                    );
+                );
 
-            netWork.PersistNetwork(Path.Combine(_outDir, "NetworkFinal.xml"));
+            netWork.PersistNetwork(Path.Combine(_outDir, fileNameToPersistNetwork));
             return trainingAlgorithm;
         }
 
@@ -171,7 +187,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             AbstractNetwork netWork;
             if (networkFile == null)
             {
-                netWork = new NeuralNetwork(data.Inputs[0].Length, data.Outputs[0].Length, 1, new[] {117},
+                netWork = new NeuralNetwork(data.Inputs[0].Length, data.Outputs[0].Length, 1, new[] {100},
                                             new HyperTanActivation());
                 netWork.InitNetworkWithRandomWeights();
             }

@@ -124,7 +124,7 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         private void WriteLog(string message, int logLevel)
         {
-            if ( LogLevel >= logLevel) WriteLog(message);
+            if ( LogLevel <= logLevel) WriteLog(message);
         }
 
 
