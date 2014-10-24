@@ -45,7 +45,12 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
                 NetworkFactory.NumberOfHiddenLayers = parentNetworks[indexToMutate].NumberOfHiddenLayers;
                 NetworkFactory.NumberOfInputFeatures = parentNetworks[indexToMutate].NumberOfInputFeatures;
                 NetworkFactory.NumberOfOutputs = parentNetworks[indexToMutate].NumberOfOutputs;
-                NetworkFactory.NumberOfneuronsForHiddenLayers = parentNetworks[indexToMutate].NumberOfneuronsForHiddenLayers;
+                NetworkFactory.NumberOfneuronsForHiddenLayers = new int[parentNetworks[indexToMutate].NumberOfneuronsForHiddenLayers.Length];
+                for (int j = 0; j < parentNetworks[indexToMutate].NumberOfneuronsForHiddenLayers.Length; j++)
+                {
+                    NetworkFactory.NumberOfneuronsForHiddenLayers[j] =
+                        parentNetworks[indexToMutate].NumberOfneuronsForHiddenLayers[j];
+                }
 
                 var hasChanged = false;
                 if (addOrDeleteNode == 0)

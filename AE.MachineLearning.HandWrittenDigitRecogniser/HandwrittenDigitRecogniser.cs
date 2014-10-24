@@ -171,7 +171,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             AbstractNetwork netWork;
             if (networkFile == null)
             {
-                netWork = new NeuralNetwork(data.Inputs[0].Length, data.Outputs[0].Length, 1, new[] {100},
+                netWork = new NeuralNetwork(data.Inputs[0].Length, data.Outputs[0].Length, 1, new[] {117},
                                             new HyperTanActivation());
                 netWork.InitNetworkWithRandomWeights();
             }
