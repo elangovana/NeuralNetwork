@@ -163,3 +163,4 @@ Documentation/[rR]eport/reportlatex/*.synctex.gz
 Documentation/[rR]eport/reportlatex/*.toc
 Documentation/[rR]eport/reportlatex/*.bbl
 Documentation/[rR]eport/reportlatex/*.blg
+/data/output
