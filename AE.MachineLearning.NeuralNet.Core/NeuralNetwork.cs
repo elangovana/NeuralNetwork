@@ -170,7 +170,7 @@ namespace AE.MachineLearning.NeuralNet.Core
                     {
                         layerWeights[nu][w] = random.NextDouble();
                     }
-                    biases[nu] = random.Next(-1,1);
+                    biases[nu] = random.NextDouble();
                 }
                 SetWeightsForLayer(nw, layerWeights, biases);
             }
