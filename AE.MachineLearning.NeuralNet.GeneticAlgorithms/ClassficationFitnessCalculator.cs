@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using AE.MachineLearning.NeuralNet.Core;
 
 namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
 {
@@ -8,22 +7,17 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
     /// </summary>
     public class ClassficationFitnessCalculator : IFitnessCalculator
     {
+        /// <summary>
+        /// Returns % correct
+        /// </summary>
+        /// <param name="targetOutputs">Expected outputs</param>
+        /// <param name="actualOutputs">Actual outputs</param>
+        /// <returns></returns>
         public double Calculator(double[][] targetOutputs, double[][] actualOutputs)
         {
-            int totalCorrect = targetOutputs.Where((t, r) => GetDigit(t) == GetDigit(actualOutputs[r])).Count();
+            double error = new ClassificationErrorCalculator().CalculateError(targetOutputs, actualOutputs);
 
-            return (totalCorrect*100.0)/actualOutputs.Length;
-        }
-
-        private static int GetDigit(double[] entry)
-        {
-
-            for (int v = 0; v < entry.Length; v++)
-            {
-                if (Math.Round(entry[v], 4) == Math.Round(entry.Max(), 4)) return v;
-            }
-
-            return -1;
+            return (1.0 - error)*100;
         }
     }
 }

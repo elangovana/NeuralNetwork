@@ -21,6 +21,8 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         public abstract void DeleteNeuron(int layerIndex);
 
+        public abstract AbstractNetwork CloneNetwork(AbstractNetwork networkToClone);
+
 
         /// <summary>
         ///     Sets the weights for a given layer

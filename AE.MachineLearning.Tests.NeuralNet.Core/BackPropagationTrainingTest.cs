@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Linq;
 using AE.MachineLearning.NeuralNet.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace AE.MachineLearning.Tests.NeuralNet.Core
 {
     [TestClass]
     public class BackPropagationTrainingTest
     {
+       
         private GradientSquaredLossCalculator _gradientSquaredLossCalculator;
         private NeuralNetwork _network;
         private int _oIndex;
+
 
         [TestInitialize]
         public void TestInit()
@@ -31,6 +35,9 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
 
 
             _gradientSquaredLossCalculator = new GradientSquaredLossCalculator(new HyperTanActivation());
+
+            //  _errorCalculator = new Mock<IErrorCalculator>();
+            //  ToDo Fix
         }
 
         [TestMethod]
@@ -43,22 +50,21 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
                     LearningRate = .90,
                     Momentum = .0,
                     MaxError = 0.0,
-                    MaxIteration = 1
+                    MaxIteration = 1,
+                    ErrorCalculator = new MockErrorCalc()
                 };
 
 
-            var inputs = new double[2][];
-            for (int index = 0; index < inputs.Length; index++)
-            {
-                inputs[index] = new[] {1.0, 2.0, 3.0};
-            }
+            var inputs = new[]
+                {
+                    new[] {1.0, 2.0, 3.0}
+                };
 
 
-            var outputs = new double[2][];
-            for (int i = 0; i < outputs.Length; i++)
-            {
-                outputs[i] = new[] {-.85, .7500};
-            }
+            var outputs = new[]
+                {
+                    new[] {-.85, .7500}
+                };
 
             //Act
             sut.Train(inputs, outputs);
@@ -78,20 +84,19 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
                     LearningRate = .90,
                     Momentum = 0.2,
                     MaxError = 0.0000,
-                    MaxIteration = 5
+                    MaxIteration = 4,
+                    ErrorCalculator = new MockErrorCalc()
                 };
-            var inputs = new double[1][];
-            for (int index = 0; index < inputs.Length; index++)
-            {
-                inputs[index] = new[] {1.0, 2.0, 3.0};
-            }
+            var inputs = new[]
+                {
+                    new[] {1.0, 2.0, 3.0}
+                };
 
 
-            var outputs = new double[1][];
-            for (int i = 0; i < outputs.Length; i++)
-            {
-                outputs[i] = new[] {-.85, .7500};
-            }
+            var outputs = new[]
+                {
+                    new[] {-.85, .7500}
+                };
 
             //Act
             sut.Train(inputs, outputs);
@@ -99,6 +104,16 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
             //Assert
             Assert.AreEqual(-.8859, Math.Round(_network.NetworkLayers[_oIndex].Neurons[0].Output, 4));
             Assert.AreEqual(.8460, Math.Round(_network.NetworkLayers[_oIndex].Neurons[1].Output, 4));
+        }
+
+        private class MockErrorCalc : IErrorCalculator
+        {
+            public double CalculateError(double[][] targetOutputs, double[][] actutalOutputs)
+            {
+                return 100.0;
+            }
+
+           
         }
     }
 }

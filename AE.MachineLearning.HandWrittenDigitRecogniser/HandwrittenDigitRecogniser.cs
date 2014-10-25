@@ -50,31 +50,15 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
 
 
             //Write Network init
-            int i = 1;
-            double correctRate = 0.0;
-     
-            var maxScore = 0.0;
-            var maxScoreNetwork = "";
-            do
-            {
-              
-                string fileName = string.Format("Networkfinal{0}.xml", i);
-                BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, 1, maxError,
-                                                                            fileName);
-
-                i++;
-                correctRate = Predict(data, trainingAlgoritihmAlgorithm);
-                if (correctRate > maxScore)
-                {
-                    maxScore = correctRate;
-                    maxScoreNetwork = fileName;
-                }
-            } while (correctRate < 90 && i < maxIteration);
-
-
-            Writelog("Procesing complete");
-            Writelog(string.Format( "Max score {0}, in netwokr {1}" , maxScore, maxScoreNetwork));
            
+        
+
+
+            BackPropagationTraining trainingAlgoritihmAlgorithm = Train(data, netWork, maxIteration, maxError);
+
+
+            Predict(data, trainingAlgoritihmAlgorithm);
+        
         }
 
         public void RunGeneticAlgorithm(int minLayers, int maxLayers, int minNoOfNodes, int maxNoOfNodes,
@@ -159,7 +143,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
         }
 
         private BackPropagationTraining Train(HandandWrittenDataLoader data, AbstractNetwork netWork, int maxIteration,
-                                              double maxError, string fileNameToPersistNetwork)
+                                              double maxError)
         {
             Writelog(string.Format("Train file Records rows {0} columns {1}", data.Inputs.Length, data.Inputs[0].Length));
             Writelog(
@@ -168,7 +152,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                     _learningRate, _momentum, maxIteration, maxError));
 
             var trainingAlgorithm = new BackPropagationTraining(netWork,
-                                                                new EntropyLossGradientCalc(new HyperTanActivation()))
+                                                                new EntropyLossGradientCalc(new HyperTanActivation()),_outDir)
                 {
                     LogWriter = RunLogWriter,
                     LearningRate = _learningRate,
@@ -183,7 +167,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
             data.Randomise(data.Inputs, data.Outputs, out randomisedInputs, out randomisedOutputs);
             trainingAlgorithm.Train(randomisedInputs, randomisedOutputs);
 
-            netWork.PersistNetwork(Path.Combine(_outDir, fileNameToPersistNetwork));
+
             return trainingAlgorithm;
         }
 

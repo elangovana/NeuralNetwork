@@ -13,10 +13,10 @@ namespace AE.MachineLearning.NeuralNet.Core
         [DataMember] private readonly int _numberOfOutputs;
 
         [DataMember] private readonly int[] _numberOfneuronsForHiddenLayers;
+        private IActivation _activation;
         private IActivation _activationOutput;
 
         [DataMember] private NetworkLayer[] _networkLayers;
-        private IActivation _activation;
 
         public NeuralNetwork()
         {
@@ -51,7 +51,6 @@ namespace AE.MachineLearning.NeuralNet.Core
         public override IActivation Activation
         {
             get { return _activation; }
-   
         }
 
 
@@ -85,6 +84,11 @@ namespace AE.MachineLearning.NeuralNet.Core
             get { return _networkLayers ?? (_networkLayers = ConstructNetwork()); }
         }
 
+        public override IActivation ActivationOutput
+        {
+            get { return _activationOutput ?? Activation; }
+        }
+
         public override void AddNeuron(int layerIndex)
         {
             throw new NotImplementedException();
@@ -95,10 +99,33 @@ namespace AE.MachineLearning.NeuralNet.Core
             throw new NotImplementedException();
         }
 
-        public override IActivation ActivationOutput
+        public override AbstractNetwork CloneNetwork(AbstractNetwork networkToClone)
         {
-            get { return _activationOutput ?? Activation; }
-         
+            var newNetwork = new NeuralNetwork(networkToClone.NumberOfInputFeatures,
+                                               networkToClone.NumberOfOutputs,
+                                               networkToClone.NumberOfHiddenLayers,
+                                               networkToClone.NumberOfneuronsForHiddenLayers,
+                                               networkToClone.Activation,
+                                               networkToClone.ActivationOutput);
+
+            for (int nl = 0; nl < networkToClone.NetworkLayers.Length; nl++)
+            {
+                var weights = new double[networkToClone.NetworkLayers[nl].Neurons.Length][];
+                var biases = new double[networkToClone.NetworkLayers[nl].Neurons.Length];
+                for (int nu = 0; nu < networkToClone.NetworkLayers[nl].Neurons.Length; nu++)
+                {
+                    weights[nu] = new double[networkToClone.NetworkLayers[nl].Neurons[nu].Weights.Length];
+                    biases[nu] = networkToClone.NetworkLayers[nl].Neurons[nu].Bias;
+                    for (int w = 0; w < networkToClone.NetworkLayers[nl].Neurons[nu].Weights.Length; w++)
+                    {
+                        weights[nu][w] = networkToClone.NetworkLayers[nl].Neurons[nu].Weights[w];
+                    }
+                }
+
+                SetWeightsForLayer(nl, weights, biases);
+            }
+
+            return newNetwork;
         }
 
         public override double[] GetOutput()
@@ -204,19 +231,19 @@ namespace AE.MachineLearning.NeuralNet.Core
             PersistanceHelper.Serlialse(this, fileName);
         }
 
-        public override AbstractNetwork LoadNetwork(string fileName, IActivation activation, IActivation outputActivation = null)
+        public override AbstractNetwork LoadNetwork(string fileName, IActivation activation,
+                                                    IActivation outputActivation = null)
         {
             _activation = activation;
             _activationOutput = ActivationOutput;
 
             var networK = PersistanceHelper.Deseralise<NeuralNetwork>(fileName);
-    
+
             networK.NetworkLayers[0].Activation = new InputActivation();
 
-            for (var i = 1; i < networK.NetworkLayers.Length -1 ; i++)
+            for (int i = 1; i < networK.NetworkLayers.Length - 1; i++)
             {
                 networK.NetworkLayers[i].Activation = Activation;
-                
             }
 
             networK.OutputLayer.Activation = ActivationOutput;

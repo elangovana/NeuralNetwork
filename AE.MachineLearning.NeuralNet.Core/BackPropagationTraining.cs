@@ -7,6 +7,7 @@ namespace AE.MachineLearning.NeuralNet.Core
     public class BackPropagationTraining : ITrainingAlgoritihm
     {
         private readonly IGradientCalculator _gradientCalculator;
+        private IErrorCalculator _errorCalculator;
 
         private int _flushCounter;
         private double[][] _gradients;
@@ -14,18 +15,26 @@ namespace AE.MachineLearning.NeuralNet.Core
         private int _maxIteration = 10000;
         private double[][] _previousDeltaBias;
         private double[][][] _previousDeltaWeight;
+        private IShouffler _shouffler;
+ 
 
-
-        public BackPropagationTraining(IGradientCalculator gradientCalculator)
+        public BackPropagationTraining(IGradientCalculator gradientCalculator, string outDir = null)
         {
+            OutDir = outDir;
             _gradientCalculator = gradientCalculator;
         }
 
-        public BackPropagationTraining(AbstractNetwork network, IGradientCalculator gradientCalculator)
+        public BackPropagationTraining(AbstractNetwork network, IGradientCalculator gradientCalculator,
+                                       string outDir = null)
         {
             Network = network;
             _gradientCalculator = gradientCalculator;
+            OutDir = outDir;
         }
+
+
+       
+        public string OutDir { get; set; }
 
         public double LearningRate { get; set; }
 
@@ -37,6 +46,7 @@ namespace AE.MachineLearning.NeuralNet.Core
             set { _maxError = value; }
         }
 
+
         public int MaxIteration
         {
             get { return _maxIteration; }
@@ -45,17 +55,29 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         public int LogLevel { get; set; }
 
+        public IShouffler Shouffler
+        {
+            get { return _shouffler ?? (_shouffler = new Shouffler()); }
+            set { _shouffler = value; }
+        }
+
+        public IErrorCalculator ErrorCalculator
+        {
+            get { return _errorCalculator ?? (_errorCalculator = new ClassificationErrorCalculator()); }
+            set { _errorCalculator = value; }
+        }
+
         public StreamWriter LogWriter { get; set; }
 
         public AbstractNetwork Network { get; set; }
+
 
         /// <summary>
         ///     Trains the network
         /// </summary>
         /// <param name="inputs">The first dimenension is the dataset, the second dimension must be equal  number of input features </param>
         /// <param name="targetOutputs"></param>
-        public void Train(double[][] inputs, double[][] targetOutputs
-            )
+        public void Train(double[][] inputs, double[][] targetOutputs)
         {
             if (inputs.Any(x => x.Length != Network.NumberOfInputFeatures))
                 throw new NeuralNetException(
@@ -83,48 +105,46 @@ namespace AE.MachineLearning.NeuralNet.Core
                 string.Format(
                     "Back Propgation settings learningRate {0}, Momentum {1}, MaxError {2}, MaxIterations{3} ",
                     LearningRate, Momentum, MaxError, MaxIteration));
-
-            for (int index = 0; index < inputs.Length; index++)
+            int iter = 0;
+            double error;
+            double minError = 1000.0;
+            string bestNetworkFile = "";
+            AbstractNetwork bestNetwork = null;
+            double[][] shouffledInputs = inputs;
+            double[][] shouffledTargetOutputs = targetOutputs;
+            do
             {
-                double error = 0.0;
-                int iter = 0;
-                double totalGradientChange = 0.0;
-                do
+                //Shuffle Inputs
+                double[][] tI;
+                double[][] to;
+                Shouffler.Shouffle(shouffledInputs, shouffledTargetOutputs, out tI, out to);
+                shouffledInputs = tI;
+                shouffledTargetOutputs = to;
+
+                //Run Back Prop Stoch Gradient
+                RunStochasticGradientBackProp(shouffledInputs, shouffledTargetOutputs);
+
+                //validate
+                double[][] actualOutputs = Predict(shouffledInputs);
+
+                //Calc Error
+                error = ErrorCalculator.CalculateError(shouffledTargetOutputs, actualOutputs);
+                iter++;
+                var fileName = string.Format("Network{0}.xml", iter);
+                Persist(fileName);
+                if (error < minError)
                 {
-                    //Compute output
-                    Network.ComputeOutput(inputs[index]);
+                    minError = error;
+                    bestNetworkFile = fileName;
+                    bestNetwork = Network.CloneNetwork(Network);
+                }
+                WriteLog(string.Format("Iteration {0},  % correct {1}", iter, (1.0 - error)*100.0),2);
+           
+                //loop till target error is achieved
+            } while (error > MaxError && iter < MaxIteration);
 
-                    //Cal errror to keep going :-)
-                    error += CalcError(targetOutputs[index], Network.GetOutput());
-
-                    error = error/(iter + 1);
-                    //Compute gradient for output layer
-                    int nw = Network.NetworkLayers.Length - 1;
-                    _gradients[nw] = ComputeGradientOutput(Network.NetworkLayers[nw], targetOutputs[index]);
-
-                    //Compute gradient for rest of the layers
-                    for (nw = nw - 1; nw > 0; nw--)
-                    {
-                        _gradients[nw] = ComputeGradientHidden(Network.NetworkLayers[nw + 1], _gradients[nw + 1],
-                                                               Network.NetworkLayers[nw]);
-                    }
-
-
-                    //Update Weights
-                    totalGradientChange += UpdateWeights(LearningRate, Momentum);
-                    totalGradientChange = totalGradientChange/(iter + 1);
-
-                    iter++;
-                } while (totalGradientChange > MaxError && iter < MaxIteration);
-                WriteLog(string.Format("Input Index {2}, Iteration {0}, Average Error {1}, Total Gradient Change {3}",
-                                       iter,
-                                       error, index, totalGradientChange.ToString("F5")),2);
-            }
-        }
-
-        private void WriteLog(string message, int logLevel)
-        {
-            if ( LogLevel <= logLevel) WriteLog(message);
+            Network = bestNetwork;
+            WriteLog(string.Format("BestNetwork {0}, with error {1}", bestNetworkFile, minError));
         }
 
 
@@ -147,6 +167,45 @@ namespace AE.MachineLearning.NeuralNet.Core
             }
 
             return output;
+        }
+
+        private void Persist(string fileName)
+        {
+            if (!string.IsNullOrEmpty(OutDir))
+            {
+                Network.PersistNetwork(Path.Combine(OutDir, fileName));
+            }
+        }
+
+        private void RunStochasticGradientBackProp(double[][] inputs, double[][] targetOutputs)
+        {
+            for (int index = 0; index < inputs.Length; index++)
+            {
+                //Compute output
+                Network.ComputeOutput(inputs[index]);
+
+                //Cal errror to keep going :-)
+                // error += CalcError(targetOutputs[index], Network.GetOutput());
+
+                // error = error/(iter + 1);
+                //Compute gradient for output layer
+                int nw = Network.NetworkLayers.Length - 1;
+                _gradients[nw] = ComputeGradientOutput(Network.NetworkLayers[nw], targetOutputs[index]);
+
+                //Compute gradient for rest of the layers
+                for (nw = nw - 1; nw > 0; nw--)
+                {
+                    _gradients[nw] = ComputeGradientHidden(Network.NetworkLayers[nw + 1], _gradients[nw + 1],
+                                                           Network.NetworkLayers[nw]);
+                }
+
+                UpdateWeights(LearningRate, Momentum);
+            }
+        }
+
+        private void WriteLog(string message, int logLevel)
+        {
+            if (LogLevel <= logLevel) WriteLog(message);
         }
 
         private void InitPreviousDeltas()
@@ -245,11 +304,6 @@ namespace AE.MachineLearning.NeuralNet.Core
             return totalGradient;
         }
 
-
-        private static double CalcError(double[] target, double[] output)
-        {
-            return (target.Select((t, i) => Math.Abs(t - output[i])).Sum());
-        }
 
         private void WriteLog(string message)
         {

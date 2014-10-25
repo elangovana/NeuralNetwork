@@ -8,6 +8,8 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         AbstractNetwork Network { get; set; }
 
+        IErrorCalculator ErrorCalculator { get; set; }
+
         /// <summary>
         ///     Trains the network
         /// </summary>
