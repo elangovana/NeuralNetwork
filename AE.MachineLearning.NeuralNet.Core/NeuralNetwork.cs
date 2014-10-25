@@ -236,10 +236,12 @@ namespace AE.MachineLearning.NeuralNet.Core
                                                     IActivation outputActivation = null)
         {
             _activation = activation;
-            _activationOutput = ActivationOutput;
+            _activationOutput = outputActivation;
 
             var networK = PersistanceHelper.Deseralise<NeuralNetwork>(fileName);
 
+            networK._activation = activation;
+            networK._activationOutput = outputActivation;
             networK.NetworkLayers[0].Activation = new InputActivation();
 
             for (int i = 1; i < networK.NetworkLayers.Length - 1; i++)

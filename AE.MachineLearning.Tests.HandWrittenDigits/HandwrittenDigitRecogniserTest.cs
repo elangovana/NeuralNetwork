@@ -26,7 +26,7 @@ namespace AE.MachineLearning.Tests.HandWrittenDigits
 
             using (var sut = new HandwrittenDigitRecogniser(trainFile,testFile, outDir,.9,.2))
             {
-                sut.Run();
+                sut.Run(2);
             }
           
         }
@@ -60,7 +60,7 @@ namespace AE.MachineLearning.Tests.HandWrittenDigits
 
             using (var sut = new HandwrittenDigitRecogniser(trainFile, testFile, outDir,.5,.2, NetworkFile))
             {
-                sut.Run();
+                sut.Run(2);
             }
 
         }
