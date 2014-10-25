@@ -159,7 +159,7 @@ namespace AE.MachineLearning.HandWrittenDigitRecogniser
                     Momentum = _momentum,
                     MaxError = maxError,
                     MaxIteration = maxIteration,
-                    LogLevel = 3
+                    LogLevel = 0
                 };
 
             double[][] randomisedInputs = null;

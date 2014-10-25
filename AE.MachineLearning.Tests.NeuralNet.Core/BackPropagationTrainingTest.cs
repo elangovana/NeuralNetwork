@@ -76,6 +76,40 @@ namespace AE.MachineLearning.Tests.NeuralNet.Core
 
 
         [TestMethod]
+        public void ShouldPredict()
+        {
+            //Arrange
+
+            var sut = new BackPropagationTraining(_network, _gradientSquaredLossCalculator)
+            {
+                LearningRate = .90,
+                Momentum = .0,
+                MaxError = 0.0,
+                MaxIteration = 1,
+                ErrorCalculator = new MockErrorCalc()
+            };
+
+
+            var inputs = new[]
+                {
+                    new[] {1.0, 2.0, 3.0}
+                };
+
+
+            var outputs = new[]
+                {
+                    new[] {-.85, .7500}
+                };
+
+            //Act
+            sut.Train(inputs, outputs);
+
+            //Assert
+            sut.Predict(inputs);
+        }
+
+
+        [TestMethod]
         public void ShouldTrainWithMometum()
         {
             //Arrange

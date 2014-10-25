@@ -120,9 +120,10 @@ namespace AE.MachineLearning.NeuralNet.Core
                     {
                         weights[nu][w] = networkToClone.NetworkLayers[nl].Neurons[nu].Weights[w];
                     }
+                   
                 }
-
-                SetWeightsForLayer(nl, weights, biases);
+                newNetwork.SetWeightsForLayer(nl, weights, biases);
+               
             }
 
             return newNetwork;
