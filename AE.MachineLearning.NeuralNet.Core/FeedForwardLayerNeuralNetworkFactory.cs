@@ -1,5 +1,8 @@
 ﻿namespace AE.MachineLearning.NeuralNet.Core
 {
+    /// <summary>
+    /// Factory to create feed forward neural network
+    /// </summary>
     public class FeedForwardLayerNeuralNetworkFactory : INetworkFactory
     {
         public IActivation Activation { get; set; }

@@ -5,7 +5,7 @@ namespace AE.MachineLearning.NeuralNet.Core
 {
     public class Shuffler : IShuffler
     {
-        public void Shouffle(double[][] inputs, double[][] outputs, out double[][] randomisedInputs,
+        public void Shuffle(double[][] inputs, double[][] outputs, out double[][] randomisedInputs,
                              out double[][] randomisedOutputs)
         {
             var random = new Random();

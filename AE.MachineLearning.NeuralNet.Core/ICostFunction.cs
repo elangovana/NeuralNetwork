@@ -10,10 +10,15 @@
         /// <returns>Cost</returns>
         double Cost(double target, double actual);
 
-        double Cost(double[] target, double[] actual);
 
+        /// <summary>
+        /// Derivative of cost function
+        /// </summary>
+        /// <param name="target">Expected Value</param>
+        /// <param name="actual">Actual Value</param>
+        /// <returns>Returns the derivate of cost function</returns>
         double DerivativeCostWrtOutput(double target, double actual);
 
-        double DerivativeCostWrtOutput(double[] target, double[] actual);
+      
     }
 }

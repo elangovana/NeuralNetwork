@@ -3,8 +3,17 @@ using System.Linq;
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
+    /// <summary>
+    /// Calculates percentage correct
+    /// </summary>
     public class ClassificationErrorCalculator : IErrorCalculator
     {
+        /// <summary>
+        /// Calcuates the error rates by dividing the total incorrect classifications with the total no of items to classify..
+        /// </summary>
+        /// <param name="targetOutputs">Expected outouts</param>
+        /// <param name="actualOutputs">Actual outputs</param>
+        /// <returns>Returns a value between 1 and 0, 0 indicting no errors, and 1 indicates 100% error</returns>
         public double CalculateError(double[][] targetOutputs, double[][] actualOutputs)
         {
             int totalCorrect = targetOutputs.Where((t, r) => GetDigit(t) == GetDigit(actualOutputs[r])).Count();

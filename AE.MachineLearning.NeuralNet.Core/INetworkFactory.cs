@@ -1,5 +1,8 @@
 ﻿namespace AE.MachineLearning.NeuralNet.Core
 {
+    /// <summary>
+    /// Creates a network
+    /// </summary>
     public interface INetworkFactory
     {
         IActivation Activation { get; set; }

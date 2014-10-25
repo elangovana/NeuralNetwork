@@ -117,7 +117,7 @@ namespace AE.MachineLearning.NeuralNet.Core
                 //Shuffle Inputs
                 double[][] tI;
                 double[][] to;
-                Shouffler.Shouffle(shouffledInputs, shouffledTargetOutputs, out tI, out to);
+                Shouffler.Shuffle(shouffledInputs, shouffledTargetOutputs, out tI, out to);
                 shouffledInputs = tI;
                 shouffledTargetOutputs = to;
 
