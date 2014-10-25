@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace AE.MachineLearning.NeuralNet.Core
 {
-    public class Shouffler : IShouffler
+    public class Shuffler : IShuffler
     {
         public void Shouffle(double[][] inputs, double[][] outputs, out double[][] randomisedInputs,
                              out double[][] randomisedOutputs)

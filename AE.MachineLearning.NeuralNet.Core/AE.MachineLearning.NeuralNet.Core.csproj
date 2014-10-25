@@ -53,14 +53,14 @@
     <Compile Include="InputActivation.cs" />
     <Compile Include="HyperTanActivation.cs" />
     <Compile Include="IActivation.cs" />
-    <Compile Include="IShouffler.cs" />
+    <Compile Include="IShuffler.cs" />
     <Compile Include="ITrainingAlgoritihm.cs" />
     <Compile Include="NetworkLayer.cs" />
     <Compile Include="NeuralNetException.cs" />
     <Compile Include="NeuralNetwork.cs" />
     <Compile Include="PersistanceHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Shouffler.cs" />
+    <Compile Include="Shuffler.cs" />
     <Compile Include="SigmoidActivate.cs" />
     <Compile Include="Neuron.cs" />
     <Compile Include="SquaredCostFunction.cs" />

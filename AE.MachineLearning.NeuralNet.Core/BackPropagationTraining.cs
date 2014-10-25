@@ -15,7 +15,7 @@ namespace AE.MachineLearning.NeuralNet.Core
         private int _maxIteration = 10000;
         private double[][] _previousDeltaBias;
         private double[][][] _previousDeltaWeight;
-        private IShouffler _shouffler;
+        private IShuffler _shouffler;
  
 
         public BackPropagationTraining(IGradientCalculator gradientCalculator, string outDir = null)
@@ -55,9 +55,9 @@ namespace AE.MachineLearning.NeuralNet.Core
 
         public int LogLevel { get; set; }
 
-        public IShouffler Shouffler
+        public IShuffler Shouffler
         {
-            get { return _shouffler ?? (_shouffler = new Shouffler()); }
+            get { return _shouffler ?? (_shouffler = new Shuffler()); }
             set { _shouffler = value; }
         }
 
