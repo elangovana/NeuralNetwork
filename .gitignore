@@ -164,3 +164,10 @@ Documentation/[rR]eport/reportlatex/*.toc
 Documentation/[rR]eport/reportlatex/*.bbl
 Documentation/[rR]eport/reportlatex/*.blg
 /data/output
+/packages/Moq.4.2.1409.1722/lib/net35/Moq.dll
+/packages/Moq.4.2.1409.1722/lib/net35/Moq.xml
+/packages/Moq.4.2.1409.1722/lib/net40/Moq.dll
+/packages/Moq.4.2.1409.1722/lib/net40/Moq.xml
+/packages/Moq.4.2.1409.1722/lib/sl4/Moq.Silverlight.dll
+/packages/Moq.4.2.1409.1722/lib/sl4/Moq.Silverlight.xml
+/packages/Moq.4.2.1409.1722/Moq.4.2.1409.1722.nupkg
