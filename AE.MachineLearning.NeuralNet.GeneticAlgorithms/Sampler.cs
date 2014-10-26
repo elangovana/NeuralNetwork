@@ -15,14 +15,14 @@ namespace AE.MachineLearning.NeuralNet.GeneticAlgorithms
             Random random = seed == null ? new Random() : new Random(seed.Value);
             for (int i = 0; i < sampleSize; i++)
             {
-                int numOfHiddenLayers = random.Next(minLayer, maxLayer);
+                int numOfHiddenLayers = random.Next(minLayer, maxLayer + 1);
 
                 var numOfNodesPerHiddenLayer = new int[numOfHiddenLayers];
 
 
                 for (int j = 0; j < numOfHiddenLayers; j++)
                 {
-                    numOfNodesPerHiddenLayer[j] = random.Next(minNodes, maxNodes);
+                    numOfNodesPerHiddenLayer[j] = random.Next(minNodes, maxNodes + 1);
                 }
 
 

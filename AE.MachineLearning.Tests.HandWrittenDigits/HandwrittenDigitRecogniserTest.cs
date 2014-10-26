@@ -42,12 +42,12 @@ namespace AE.MachineLearning.Tests.HandWrittenDigits
 
             using (var sut = new HandwrittenDigitRecogniser(GaTrainFile, testFile, outDir, .02, .7))
             {
-                sut.RunGeneticAlgorithm(minLayers: 1, maxLayers: 11, maxNoOfNodes: 101, minNoOfNodes: 1,
-                                        numberOfGenerations: 10, populationSize: 10, mutationSize: 5,
-                                        iterationPerTraning: 1, maxIteration: 10, maxError: .29);
+                sut.RunGeneticAlgorithm(minLayers: 1, maxLayers: 2, maxNoOfNodes: 101, minNoOfNodes: 1,
+                                        numberOfGenerations: 2, populationSize: 3, mutationSize: 5,
+                                        iterationPerTraning: 1, maxIteration: 2, maxError: .29);
             }
 
-            throw new Exception("testhkjhk");
+           
 
         }
 
