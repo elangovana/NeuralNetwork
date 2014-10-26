@@ -15,7 +15,10 @@ namespace AE.MachineLearning.HandWrittenDigits.App
             OptionGA = "GA";
             if (args.Length < 1 || (args.Length > 1 && (args[0] != OptionBP && args[0] != OptionGA)))
             {
+                Console.WriteLine("Run from command prompt");
                 PrintUsage();
+                Console.WriteLine("\nPress enter to exit....");
+                Console.ReadLine();
                 return;
             }
             var parsedArgs = new string[args.Length - 1];
@@ -78,6 +81,7 @@ namespace AE.MachineLearning.HandWrittenDigits.App
 
         private static void PrintUsage()
         {
+            
             Console.WriteLine("Usage: " +
                               "\n--------------------------------" +
                               "\n To Run Back propogation" +

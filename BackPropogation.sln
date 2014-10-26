@@ -14,14 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{8E384ABA-6A29-4B37-8B9A-7BC0E6625472}"
-	ProjectSection(SolutionItems) = preProject
-		data\test-nolabel.csv = data\test-nolabel.csv
-		data\testdata.csv = data\testdata.csv
-		data\train.csv = data\train.csv
-		data\traindata.csv = data\traindata.csv
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.GeneticAlgorithms", "AE.MachineLearning.NeuralNet.GeneticAlgorithms\AE.MachineLearning.NeuralNet.GeneticAlgorithms.csproj", "{445B538C-B106-4631-8AC6-84E32C3688A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.HandWrittenDigitRecogniser", "AE.MachineLearning.HandWrittenDigitRecogniser\AE.MachineLearning.HandWrittenDigitRecogniser.csproj", "{B8B9CC2E-C810-452E-957F-749E5051DD4A}"
