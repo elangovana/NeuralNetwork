@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.NeuralNet.Core", "AE.MachineLearning.NeuralNet.Core\AE.MachineLearning.NeuralNet.Core.csproj", "{AFEEE0BD-0A9F-4207-9637-3EA7035DC716}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9BFF99FD-F1A7-4F1A-96DA-C4D7ED343CA9}"
@@ -33,6 +31,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms", "AE.MachineLearning.Tests.NeuralNet..GeneticALgorithms\AE.MachineLearning.Tests.NeuralNet.GeneticAlgorithms.csproj", "{1F314091-64C3-4356-8CFC-11F439F78367}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AE.MachineLearning.Tests.NeuralNet.Core", "AE.MachineLearning.Tests.NeuralNet.Core\AE.MachineLearning.Tests.NeuralNet.Core.csproj", "{F8733AAA-8A16-4D11-8257-43D05195DC9C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{29EC3896-064A-4EAF-993A-2953A6F85D21}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
